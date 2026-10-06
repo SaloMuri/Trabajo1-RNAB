@@ -1,0 +1,9 @@
+# Fijen las versiones exactas con `pip freeze` cuando tengan el entorno listo
+# (ej. numpy==X.Y.Z). Dejarlas sin fijar incumple el requisito de reproducibilidad.
+numpy
+scipy
+pandas
+matplotlib
+imageio
+pyyaml
+pytest
