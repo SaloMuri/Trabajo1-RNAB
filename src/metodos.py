@@ -12,10 +12,11 @@ from src.de import evolucion_diferencial
 METODOS = ["gd", "ga", "pso", "de"]     # el orden fija el indice de cada metodo en las semillas
 
 
-def crear_problema(funcion, n, presupuesto, costo_gradiente=None):
-    """Problema con conteo de evaluaciones. costo_gradiente=None -> 2n."""
+def crear_problema(funcion, n, presupuesto, costo_gradiente=None, meta=None):
+    """Problema con conteo de evaluaciones. costo_gradiente=None -> 2n. meta: f que cuenta como exito."""
     d = FUNCIONES[funcion]
-    return Problema(d["f"], d["grad"], n=n, costo_grad_en_f=costo_gradiente, max_evals=presupuesto)
+    return Problema(d["f"], d["grad"], n=n, costo_grad_en_f=costo_gradiente,
+                    max_evals=presupuesto, meta=meta)
 
 
 def ejecutar_metodo(metodo, problema, rng, dominio, parametros, guardar_trayectoria=False):

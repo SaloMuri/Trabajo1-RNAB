@@ -37,8 +37,12 @@ Cada GIF usa su propia semilla (`gifs.semilla`).
 
 ## Salidas
 * `resultados/parte1/`: `corridas.csv` (una fila por corrida), `resumen.csv` y `resumen.md`
-  (media, desviacion, mejor, peor, tasa de exito, `n_f`, `n_grad`, total equivalente) y `config_usada.yaml`.
+  (media, desviacion, mejor, peor, tasa de exito, `n_f`, `n_grad`, total equivalente y
+  `evals_exito_mediana`) y `config_usada.yaml`.
+  `evals_exito_mediana` es la mediana de evaluaciones equivalentes hasta alcanzar el umbral de
+  exito, calculada solo entre las corridas exitosas (vacia si ninguna llego).
 * `resultados/gifs/`: GIFs de GD y DE sobre curvas de nivel (en 2D).
+
 
 ## Estructura
 - `main.py`: punto de entrada

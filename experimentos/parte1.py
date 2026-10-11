@@ -47,13 +47,15 @@ def validar_config(cfg):
 
 def correr_una(metodo, funcion, n, rng, cfg):
     """Una corrida independiente. Devuelve un dict con los resultados."""
-    problema = crear_problema(funcion, n, cfg["presupuesto_evaluaciones"], cfg.get("costo_gradiente"))
+    meta = FUNCIONES[funcion]["f_opt"] + cfg["umbral_exito"][funcion]   # exito: f_mejor < meta
+    problema = crear_problema(funcion, n, cfg["presupuesto_evaluaciones"], cfg.get("costo_gradiente"), meta)
     resultado = ejecutar_metodo(metodo, problema, rng, FUNCIONES[funcion]["dominio"], cfg[metodo])
     return dict(
         f=resultado["f"],
         n_f=problema.n_f,
         n_grad=problema.n_grad,
         total=problema.total_equivalente,
+        evals_exito=problema.evals_exito,       # None si nunca llego a la meta
         divergio=resultado["divergio"],
         motivo=resultado["motivo"],
         iteraciones=resultado["iteraciones"],

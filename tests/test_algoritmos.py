@@ -84,3 +84,14 @@ def test_gd_rastrigin_cae_en_minimo_local_desde_lejos():
     p, _ = _problema("rastrigin", 2, 10000)
     r = descenso_gradiente(p, np.array([3.4, -2.6]), lr=1e-3)
     assert r["f"] > 0.9            # los minimos locales de Rastrigin tienen f >= ~0.99
+
+
+def test_evals_exito_se_guarda_la_primera_vez_que_llega_a_la_meta():
+    d = FUNCIONES["rastrigin"]
+    p = Problema(d["f"], d["grad"], n=2, max_evals=1000, meta=1e-3)
+    p.f(np.array([1.0, 1.0]))            # f = 2: aun no llega (1 evaluacion)
+    assert p.evals_exito is None
+    p.f(np.zeros((3, 2)))                # f = 0 en el origen: llega a las 1 + 3 = 4 evaluaciones
+    assert p.evals_exito == 4
+    p.f(np.zeros((5, 2)))                # no se vuelve a escribir
+    assert p.evals_exito == 4

@@ -8,12 +8,15 @@ llaman. Asi el conteo queda en un solo lugar.
   * Un gradiente "vale" `costo_grad_en_f` evaluaciones de f. Por defecto 2n, que es lo que
     costaria aproximar el gradiente con diferencias centrales en dimension n.
   * total_equivalente = n_f + costo_grad_en_f * n_grad  (esto se compara con el presupuesto).
+  * evals_exito : evaluaciones equivalentes que se habian gastado cuando el mejor valor de f 
+  bajo por primera vez de `meta` (None si nunca llego). Mide que tan rapido llega cada metodo.
 """
+
 import numpy as np
 
 
 class Problema:
-    def __init__(self, f, grad=None, n=2, costo_grad_en_f=None, max_evals=None):
+    def __init__(self, f, grad=None, n=2, costo_grad_en_f=None, max_evals=None, meta = None):
         self._f = f
         self._grad = grad
         self.n = n
@@ -23,6 +26,9 @@ class Problema:
         self.n_grad = 0
         self.mejor_f = np.inf       # mejor valor de f visto hasta ahora
         self.mejor_x = None
+        self.meta = meta            # valor de f que cuenta como exito (f_optimo + umbral); None = no medir
+        self.evals_exito = None     # se llena la primera vez que mejor_f < meta
+        
 
     def f(self, x):
         """Evalua f en un punto (n,) o en una poblacion (m, n) y actualiza el mejor valor."""
@@ -38,7 +44,15 @@ class Problema:
             valores = self._f(x)
             if valores < self.mejor_f:
                 self.mejor_f, self.mejor_x = float(valores), x.copy()
+        self._revisar_exito()
         return valores
+    
+
+    def _revisar_exito(self):
+        """Guarda cuantas evaluaciones equivalentes se llevaban al llegar por primera vez a la meta."""
+        if self.meta is not None and self.evals_exito is None and self.mejor_f < self.meta:
+            self.evals_exito = self.total_equivalente
+            
 
     def grad(self, x):
         """Evalua el gradiente (analitico). Si no hay, usa diferencias centrales."""
