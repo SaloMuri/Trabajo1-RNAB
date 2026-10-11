@@ -12,7 +12,8 @@ pip install -r requirements.txt
 
 ## Ejecutar (un solo comando)
 ```bash
-python main.py                      # experimento completo (30 corridas) + GIFs, ~1 min
+python main.py                      # experimento completo (30 corridas) + gráficas + GIFs
+python -m experimentos.graficas      # regenera solo las gráficas desde los CSV
 python main.py configs/demo.yaml    # version rapida (5 corridas), ~20 s: usar en la sustentacion
 python -m pytest -q                 # tests
 ```
@@ -41,13 +42,15 @@ Cada GIF usa su propia semilla (`gifs.semilla`).
   `evals_exito_mediana`) y `config_usada.yaml`.
   `evals_exito_mediana` es la mediana de evaluaciones equivalentes hasta alcanzar el umbral de
   exito, calculada solo entre las corridas exitosas (vacia si ninguna llego).
+* `resultados/parte1/figuras/`: seis PNG estadísticos (cuatro diagramas de distribución y dos gráficas de tasa de éxito), regenerados desde `corridas.csv` y `resumen.csv` por `experimentos/graficas.py`.
 * `resultados/gifs/`: GIFs de GD y DE sobre curvas de nivel (en 2D).
+* `reporte/parte1.md`: borrador del reporte técnico con metodología, estadísticas, discusión, figuras y referencias. Revisar y completar datos del equipo antes de publicar.
 
 
 ## Estructura
 - `main.py`: punto de entrada
 - `configs/`: parametros en YAML
 - `src/`: funciones de prueba, contador, `descenso.py`, `ga.py`, `pso.py`, `de.py`, `metodos.py`, `estadisticas.py`, `animacion.py`
-- `experimentos/`: `parte1.py` (experimento) y `gifs.py`
+- `experimentos/`: `parte1.py` (experimento), `graficas.py` (gráficas estadísticas) y `gifs.py`
 - `tests/`: gradientes, conteo de evaluaciones, presupuesto, reproducibilidad y experimento pequeno
 - `resultados/`: se regenera con el codigo

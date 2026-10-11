@@ -9,6 +9,7 @@ en el archivo YAML, no aqui.
 import sys
 
 from experimentos.gifs import generar_gifs
+from experimentos.graficas import generar_graficas
 from experimentos.parte1 import cargar_config, ejecutar_parte1
 
 
@@ -17,9 +18,11 @@ def main():
     cfg = cargar_config(ruta_config)
     print(f"Configuracion: {ruta_config}\n")
     ejecutar_parte1(cfg)
+    print("\nGenerando gráficas estadísticas...")
+    generar_graficas(cfg)
     print("\nGenerando GIFs...")
     generar_gifs(cfg)
-    print(f"\nListo. Tablas en {cfg['carpeta_resultados']}/ y GIFs en {cfg['gifs']['carpeta']}/")
+    print(f"\nListo. Tablas y gráficas en {cfg['carpeta_resultados']}/ y GIFs en {cfg['gifs']['carpeta']}/")
 
 
 if __name__ == "__main__":
