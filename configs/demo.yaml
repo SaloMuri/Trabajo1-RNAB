@@ -1,0 +1,65 @@
+# ==========================================================================
+#  DEMOSTRACION (menos de 1 minuto): pocas corridas y presupuesto reducido
+#  Todo se cambia aqui; no hace falta editar codigo.
+#  Version rapida para demostrar:  python main.py configs/demo.yaml
+# ==========================================================================
+
+# ---------------------------------- GENERAL -------------------------------
+semilla: 42                  # semilla base; con la misma semilla salen los mismos resultados
+corridas: 5                # corridas independientes por configuracion (el enunciado pide >= 30)
+funciones: [rosenbrock, rastrigin]
+dimensiones: [2, 3]
+metodos: [gd, ga, pso, de]   # gd = descenso por gradiente, ga = algoritmo genetico, pso, de
+carpeta_resultados: resultados/parte1_demo
+
+# ------------------------- PRESUPUESTO Y CRITERIO DE EXITO -----------------
+# Mismo presupuesto para TODOS los metodos, medido en evaluaciones equivalentes de f.
+presupuesto_evaluaciones: 10000
+
+# Cuanto "vale" un gradiente en evaluaciones de f. null -> 2n (diferencias centrales).
+# Para probar otra equivalencia ponga un numero fijo (por ejemplo 3).
+costo_gradiente: null
+
+# Una corrida es exitosa si  f_mejor - f_optimo < umbral  (hay que justificar el valor).
+umbral_exito:
+  rosenbrock: 1.0e-4
+  rastrigin: 1.0e-3
+
+# ------------------------------------ METODOS ------------------------------
+gd:                          # descenso por gradiente (paso fijo)
+  lr: 1.0e-3                 # tasa de aprendizaje
+  tol_grad: 1.0e-8           # parar si ||grad|| es menor que esto
+
+ga:                          # algoritmo genetico
+  pop: 40                    # tamano de poblacion
+  elite: 2                   # individuos que pasan intactos
+  k_torneo: 3                # tamano del torneo
+  alpha: 0.5                 # parametro de BLX-alpha
+  p_cruce: 0.9               # probabilidad de cruce
+  sigma: 0.05                # desviacion de la mutacion (fraccion del ancho del dominio)
+
+pso:                         # enjambre de particulas
+  pop: 20                    # numero de particulas
+  w: 0.7298                  # inercia
+  c1: 1.49618                # coeficiente cognitivo
+  c2: 1.49618                # coeficiente social
+  vmax_frac: 0.5             # velocidad maxima (fraccion del ancho del dominio)
+
+de:                          # evolucion diferencial DE/rand/1/bin
+  pop: 20                    # tamano de poblacion
+  F: 0.5                     # factor de mutacion
+  CR: 0.9                    # probabilidad de cruce
+
+# ------------------------------------- GIFS --------------------------------
+# Siempre en 2D. Cada elemento de `lista` es un GIF; `presupuesto` y `semilla` son opcionales.
+gifs:
+  carpeta: resultados/gifs_demo
+  semilla: 42
+  presupuesto_evaluaciones: 5000
+  max_cuadros: 60            # cuadros maximos por GIF
+  fps: 10
+  lista:
+    - {funcion: rosenbrock, metodo: gd}
+    - {funcion: rosenbrock, metodo: de}
+    - {funcion: rastrigin,  metodo: gd}
+    - {funcion: rastrigin,  metodo: de}
