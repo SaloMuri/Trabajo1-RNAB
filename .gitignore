@@ -2,3 +2,6 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+# salidas de la demostracion rapida (se regeneran con: python main.py configs/demo.yaml)
+resultados/parte1_demo/
+resultados/gifs_demo/

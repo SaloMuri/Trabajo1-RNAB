@@ -1,9 +1,7 @@
-# Fijen las versiones exactas con `pip freeze` cuando tengan el entorno listo
-# (ej. numpy==X.Y.Z). Dejarlas sin fijar incumple el requisito de reproducibilidad.
-numpy
-scipy
-pandas
-matplotlib
-imageio
-pyyaml
-pytest
+# Versiones fijas. Probadas con Python 3.12 (funcionan desde Python 3.10).
+numpy==2.2.6
+pandas==2.3.3
+matplotlib==3.10.8
+pillow==11.3.0
+pyyaml==6.0.3
+pytest==8.4.2
