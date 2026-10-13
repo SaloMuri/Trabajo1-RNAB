@@ -1,0 +1,28 @@
+# configs/parte2.yaml
+semilla: 28
+
+archivos:
+  distancias: "data/tsp/matriz_distancias_km.csv"
+  tiempos: "data/tsp/matriz_tiempos_horas.csv"
+  peajes: "data/tsp/matriz_peajes_euros.csv"
+  coordenadas: "data/tsp/coordenadas_47_capitales.csv"
+  export_costos: "resultados/parte2/matriz_costos.csv"
+
+vehiculo:
+  valor_hora: 10.6
+  consumo_l_100km: 3.9
+  precio_litro: 1.84
+
+hormigas:
+  num_hormigas: 58
+  num_iteraciones: 100
+  alpha: 1.0
+  beta: 2.0
+  rho: 0.1
+  q: 1000
+
+genetico:
+  tamano_poblacion: 150
+  num_generaciones: 400
+  prob_mutacion: 0.25
+  elitismo: true
