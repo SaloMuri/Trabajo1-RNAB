@@ -3,11 +3,11 @@
 
 base: configs/parte1.yaml
 
-presupuesto_evaluaciones: 5000   # presupuesto pequeno para que la demo sea corta
+presupuesto_evaluaciones: 5000   # presupuesto pequeño para que la demo sea corta
 funciones: null
 dimensiones: null
 
-carpeta_resultados: resultados/grid_pso_demo
+carpeta_resultados: resultados/parte1/grid_pso_demo
 
 corridas_ajuste: 3
 corridas_finales: 10

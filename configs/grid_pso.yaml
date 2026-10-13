@@ -1,5 +1,5 @@
 # ==========================================================================
-#  REJILLA DE HIPERPARAMETROS DE PSO (version completa, para el reporte)
+#  REJILLA DE HIPERPARAMETROS DE PSO (version completa)
 #  Ejecutar:  python -m scripts.grid_search_pso
 #  Demo rapida:  python -m scripts.grid_search_pso configs/grid_pso_demo.yaml
 # ==========================================================================
@@ -12,7 +12,7 @@ presupuesto_evaluaciones: null
 funciones: null
 dimensiones: null
 
-carpeta_resultados: resultados/grid_pso
+carpeta_resultados: resultados/parte1/grid_pso
 
 corridas_ajuste: 10              # semillas compartidas por TODAS las combinaciones (para elegir)
 corridas_finales: 30             # semillas del experimento principal (para comparar antes/despues)
