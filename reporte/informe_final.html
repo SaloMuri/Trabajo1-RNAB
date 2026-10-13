@@ -49,27 +49,49 @@
         <p>Comparar un método basado en gradiente con tres métodos metaheurísticos para minimizar dos funciones de prueba, Rosenbrock y Rastrigin, en dos y tres dimensiones. Se comparan el valor final de la función objetivo, la variabilidad entre corridas, la tasa de éxito y el número de evaluaciones utilizadas.</p>
 
         <h2>2. Funciones de prueba</h2>
-
+        <p>Las funciones de prueba se eligieron porque representan dificultades diferentes: Rosenbrock tiene un valle estrrecho y curvado, mientras que Rastrigin es multimodal y contiene muchos mínimos locales. Su comparación ayuda observar cómo interactúan la geometría de la función, estrategia de búsqueda y los parámetros de cada método. (Rosenbrock, 1960; Rastrigin, 1974).</p>
+        
         <h3>2.1. Rosenbrock</h3>
         <p>Para un vector \(x\in\mathbb{R}^n\), se utiliza</p>
         <p>\[f(x)=\sum_{i=1}^{n-1}\left[100(x_{i+1}-x_i^2)^2+(1-x_i)^2\right].\]</p>
-        <p>En esta implementación, cada coordenada está restringida al intervalo \([-2.048,2.048]\). El mínimo global es \(f(x)=0\), alcanzado en \(x=(1,\ldots,1)\). La función tiene un valle curvo y estrecho; por eso un método puede acercarse al valle sin avanzar fácilmente hacia el mínimo (Rosenbrock, 1960).</p>
+        <p>Cada término de la suma es no negativo.En esta implementación, cada coordenada está restringida al intervalo \([-2.048,2.048]\). El mínimo global es \(f(x)=0\), alcanzado en \(x=(1,\ldots,1)\). La función tiene un valle curvo y estrecho; por eso un método puede acercarse al valle sin avanzar fácilmente hacia el mínimo (Rosenbrock, 1960).</p>
+        <p>El gradiente analítico implementado se expresa por componentes: </p>
+
+        <p>\[
+        \frac{\partial f}{\partial x_1}
+        = -400x_1(x_2-x_1^2)-2(1-x_1)
+        \]</p>
+
+        <p>\[
+        \frac{\partial f}{\partial x_i}
+        = 200(x_i-x_{i-1}^2)-400x_i(x_{i+1}-x_i^2)-2(1-x_i),
+        \quad 2 \leq i \leq n-1
+        \]</p>
+
+        <p>\[
+        \frac{\partial f}{\partial x_n}
+        = 200(x_n-x_{n-1}^2)
+        \]</p>
 
         <h3>2.2. Rastrigin</h3>
         <p>La función usada es</p>
         <p>\[f(x)=10n+\sum_{i=1}^{n}\left[x_i^2-10\cos(2\pi x_i)\right].\]</p>
-        <p>El dominio por coordenada es \([-5.12,5.12]\), y el mínimo global es \(f(x)=0\) en \(x=(0,\ldots,0)\). La función presenta numerosos mínimos locales, lo que dificulta que un método local encuentre el mínimo global. Su forma se usa habitualmente como función de referencia para comparar algoritmos de optimización global (Jamil & Yang, 2013).</p>
-        <p>En las dos funciones el objetivo es minimizar \(f(x)\), y el valor óptimo conocido es cero.</p>
+        <p>Para cada variable, \(x_i^2 \geq 0\) y \(1-\cos(2\pi x_i) \geq 0\). Por tanto, cada contribución puede escribirse como \(x_i^2 + 10[1-\cos(2\pi x_i)]\) y es no negativa.El dominio por coordenada es \([-5.12,5.12]\), y el mínimo global es \(f(x)=0\) en \(x=(0,\ldots,0)\). La función presenta numerosos mínimos locales, lo que dificulta que un método local encuentre el mínimo global. Su forma se usa habitualmente como función de referencia para comparar algoritmos de optimización global (Jamil & Yang, 2013).</p>
+        <p>El gradiente analítico utilizado es:</p>
+        <p>\[\frac{\partial f}{\partial x_i} = 2x_i + 20\pi \sin(2\pi x_i)\]</p>
+        <p>Por la geometría de las dos funciones se justifica la comparación: Rosenbrock examina la dificultad asociada a un valle estrecho y curvado; Rastregin examina la búsqueda en presencia de numerosos mínimos locales. En las dos funciones el objetivo es minimizar \(f(x)\), y el valor óptimo conocido es cero.</p>
 
         <h2>3. Métodos comparados</h2>
 
         <h3>3.1. Descenso por gradiente (GD)</h3>
-        <p>Se inicia desde un punto aleatorio dentro del dominio y se actualiza el vector mediante</p>
-        <p>\[x_{k+1}=x_k-\eta\nabla f(x_k),\]</p>
-        <p>donde \(\eta=0.001\) es la tasa de aprendizaje. El algoritmo termina si llega al presupuesto, si la norma del gradiente es menor que \(10^{-8}\) o si detecta valores no finitos. Los gradientes se calculan con las expresiones analíticas implementadas en <code>src/funciones.py</code>.</p>
+        <p>El método de descenso por gradiente actualiza la solución en la dirección opuesta al gradiente de la función objetivo:</p>
+        <p>\[\mathbf{x}_{k+1}=\mathbf{x}_k-\alpha\nabla f(\mathbf{x}_k)\]</p>
+        <p>El algoritmo parte de un punto aleatorio dentro del dominio. En esta implementación se utilizó una tasa de aprendizaje constante de \(\alpha=10^{-3}\) y una tolerancia de \(10^{-8}\) para la norma del gradiente. Los gradientes se calculan mediante las expresiones analíticas implementadas en src/funciones.py.</p>
+        <p>En cada iteración se evalúa la función y se actualiza la solución mientras se respete el presupuesto de evaluaciones. El algoritmo termina cuando la norma del gradiente es inferior a la tolerancia, se agota el presupuesto o se detectan valores no finitos. Como la tasa de aprendizaje es constante, el rendimiento depende de la escala y la curvatura de la función: los pasos grandes pueden provocar oscilaciones o divergencia, mientras que los pequeños pueden ralentizar la convergencia. Por ello, los resultados se analizan considerando el valor final de la función objetivo, el número de evaluaciones y las condiciones de parada.</p>
 
         <h3>3.2. Algoritmo genético (GA)</h3>
-        <p>Cada individuo es un vector real. Se conserva una élite de dos individuos, se seleccionan padres mediante torneo, se aplica cruce BLX-\(\alpha\) y mutación gaussiana, y se recortan los candidatos al dominio. Los parámetros principales son población de 40, torneo de 3, \(\alpha=0.5\), cruce con probabilidad 0.9 y desviación de mutación de 0.05 veces el ancho del dominio. La descripción sigue la estructura general de los algoritmos genéticos (Goldberg, 1989).</p>
+        <p>El algoritmo genético mantiene una población de soluciones candidatas y genera nuevas soluciones mediante selección, cruce y mutación. En esta implementación se utilizó una población de 40 individuos y elitismo de 2, que conserva los mejores candidatos de cada generación. Los padres se seleccionan mediante torneo de tamaño (k=3). El cruce BLX-(\alpha) emplea (\alpha=0.5) y una probabilidad de cruce de (0.9); para cada coordenada (j), el descendiente se genera dentro del intervalo \(x_j \in [\min(a_j,b_j)-\alpha d_j,\ \max(a_j,b_j)+\alpha d_j],  d_j=|a_j-b_j|\) donde \(a_j\) y \(b_j\) son los valores de los padres en esa coordenada. La mutación es gaussiana, con desviación típica igual a \(0.05\) veces el ancho del dominio y probabilidad de mutación por coordenada \(p=1/n\), donde \(n\) es la dimensión del problema. Finalmente, los candidatos se recortan para mantenerlos dentro del dominio permitido.</p>
+        <p>El elitismo ayuda a conservar las mejores soluciones encontradas, mientras que el cruce y la mutación favorecen la exploración de nuevas regiones. Esta configuración corresponde a una variante concreta de algoritmo genético; su rendimiento depende de los operadores y parámetros utilizados (Goldberg, 1989).</p>
 
         <h3>3.3. Optimización por enjambre de partículas (PSO)</h3>
         <p>Cada partícula mantiene una posición y velocidad. La velocidad combina inercia, atracción hacia su mejor posición personal y atracción hacia la mejor posición global:</p>
