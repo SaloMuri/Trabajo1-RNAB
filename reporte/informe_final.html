@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte: Optimización Numérica, Metaheurística y Combinatoria</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h1, h2, h3 { color: #2C3E50; }
+        .tabs { display: flex; flex-wrap: wrap; margin-bottom: 20px; border-bottom: 2px solid #2C3E50; }
+        .tab-button { background-color: #f1f1f1; border: none; outline: none; cursor: pointer; padding: 14px 24px; transition: 0.3s; font-size: 16px; font-weight: bold; color: #555; border-radius: 5px 5px 0 0; margin-right: 5px; }
+        .tab-button:hover { background-color: #ddd; }
+        .tab-button.active { background-color: #2C3E50; color: white; }
+        .tab-content { display: none; padding: 20px; border: 1px solid #ccc; border-top: none; background: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .tab-content.active { display: block; animation: fadeEffect 0.5s; }
+        @keyframes fadeEffect { from {opacity: 0;} to {opacity: 1;} }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #2C3E50; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 4px; font-family: Consolas, monospace; color: #d63384; }
+        .img-container { text-align: center; margin: 20px 0; }
+        .img-container img { max-width: 80%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .img-caption { font-size: 14px; color: #666; font-style: italic; margin-top: 10px; }
+        .math { font-style: italic; font-weight: bold; }
+    </style>
+    <!-- MathJax for rendering LaTeX formulas offline if cached, or simple fallback -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <h1 style="text-align: center;">Trabajo 1: Optimización numérica, metaheurística y combinatoria</h1>
+    <p style="text-align: center;"><strong>Integrantes:</strong> Andres Perez Cano, Oky Ruiz de la Rosa, Salome Murillo Gaviria, Nicolas David Zambrano Murcia</p>
+    <p style="text-align: center;"><strong>Enlace al repositorio:</strong> <a href="https://github.com/SaloMuri/Trabajo1-RNAB">GitHub</a></p>
+
+    <!-- Pestañas -->
+    <div class="tabs">
+        <button class="tab-button active" onclick="openTab(event, 'Parte1')">Parte 1: Optim. Numérica</button>
+        <button class="tab-button" onclick="openTab(event, 'Parte2')">Parte 2: Optim. Combinatoria</button>
+        <button class="tab-button" onclick="openTab(event, 'Alucinaciones')">Cacería de Alucinaciones</button>
+    </div>
+<!-- ========================================== -->
+    <!-- PESTAÑA 1: PARTE 1 (TEXTO ÍNTEGRO) -->
+    <!-- ========================================== -->
+    <div id="Parte1" class="tab-content active">
+        <h2>Parte 1. Optimización numérica: comparación de métodos</h2>
+
+        <h2>1. Objetivo</h2>
+        <p>Comparar un método basado en gradiente con tres métodos metaheurísticos para minimizar dos funciones de prueba, Rosenbrock y Rastrigin, en dos y tres dimensiones. Se comparan el valor final de la función objetivo, la variabilidad entre corridas, la tasa de éxito y el número de evaluaciones utilizadas.</p>
+
+        <h2>2. Funciones de prueba</h2>
+
+        <h3>2.1. Rosenbrock</h3>
+        <p>Para un vector \(x\in\mathbb{R}^n\), se utiliza</p>
+        <p>\[f(x)=\sum_{i=1}^{n-1}\left[100(x_{i+1}-x_i^2)^2+(1-x_i)^2\right].\]</p>
+        <p>En esta implementación, cada coordenada está restringida al intervalo \([-2.048,2.048]\). El mínimo global es \(f(x)=0\), alcanzado en \(x=(1,\ldots,1)\). La función tiene un valle curvo y estrecho; por eso un método puede acercarse al valle sin avanzar fácilmente hacia el mínimo (Rosenbrock, 1960).</p>
+
+        <h3>2.2. Rastrigin</h3>
+        <p>La función usada es</p>
+        <p>\[f(x)=10n+\sum_{i=1}^{n}\left[x_i^2-10\cos(2\pi x_i)\right].\]</p>
+        <p>El dominio por coordenada es \([-5.12,5.12]\), y el mínimo global es \(f(x)=0\) en \(x=(0,\ldots,0)\). La función presenta numerosos mínimos locales, lo que dificulta que un método local encuentre el mínimo global. Su forma se usa habitualmente como función de referencia para comparar algoritmos de optimización global (Jamil & Yang, 2013).</p>
+        <p>En las dos funciones el objetivo es minimizar \(f(x)\), y el valor óptimo conocido es cero.</p>
+
+        <h2>3. Métodos comparados</h2>
+
+        <h3>3.1. Descenso por gradiente (GD)</h3>
+        <p>Se inicia desde un punto aleatorio dentro del dominio y se actualiza el vector mediante</p>
+        <p>\[x_{k+1}=x_k-\eta\nabla f(x_k),\]</p>
+        <p>donde \(\eta=0.001\) es la tasa de aprendizaje. El algoritmo termina si llega al presupuesto, si la norma del gradiente es menor que \(10^{-8}\) o si detecta valores no finitos. Los gradientes se calculan con las expresiones analíticas implementadas en <code>src/funciones.py</code>.</p>
+
+        <h3>3.2. Algoritmo genético (GA)</h3>
+        <p>Cada individuo es un vector real. Se conserva una élite de dos individuos, se seleccionan padres mediante torneo, se aplica cruce BLX-\(\alpha\) y mutación gaussiana, y se recortan los candidatos al dominio. Los parámetros principales son población de 40, torneo de 3, \(\alpha=0.5\), cruce con probabilidad 0.9 y desviación de mutación de 0.05 veces el ancho del dominio. La descripción sigue la estructura general de los algoritmos genéticos (Goldberg, 1989).</p>
+
+        <h3>3.3. Optimización por enjambre de partículas (PSO)</h3>
+        <p>Cada partícula mantiene una posición y velocidad. La velocidad combina inercia, atracción hacia su mejor posición personal y atracción hacia la mejor posición global:</p>
+        <p>\[v_i\leftarrow wv_i+c_1r_1(p_i-x_i)+c_2r_2(g-x_i),\qquad x_i\leftarrow x_i+v_i.\]</p>
+        <p>Se usa una población de 20, \(w=0.7298\), \(c_1=c_2=1.49618\) y límite de velocidad de la mitad del ancho del dominio. La idea de optimización por enjambre fue presentada por Kennedy y Eberhart (1995).</p>
+
+        <h3>3.4. Evolución diferencial (DE)</h3>
+        <p>Se usa la variante DE/rand/1/bin. Para cada individuo se construye un vector mutante</p>
+        <p>\[v_i=x_{r_1}+F(x_{r_2}-x_{r_3}),\]</p>
+        <p>con índices distintos, y luego se hace cruce binomial con el individuo actual. El candidato reemplaza al individuo si su valor objetivo es igual o mejor. Se usan población de 20, \(F=0.5\) y probabilidad de cruce \(CR=0.9\), siguiendo la propuesta de Storn y Price (1997).</p>
+
+        <h2>4. Diseño experimental</h2>
+        <ul>
+            <li><strong>Funciones:</strong> Rosenbrock y Rastrigin.</li>
+            <li><strong>Dimensiones:</strong> 2 y 3.</li>
+            <li><strong>Métodos:</strong> GD, GA, PSO y DE.</li>
+            <li><strong>Corridas:</strong> 30 corridas independientes por combinación, para un total de \(2\times2\times4\times30=480\) corridas.</li>
+            <li><strong>Semilla base:</strong> 42. Las corridas independientes se derivan de esta semilla mediante <code>numpy.random.SeedSequence</code>.</li>
+            <li><strong>Presupuesto:</strong> 40 000 evaluaciones equivalentes por corrida.</li>
+            <li><strong>Umbral de éxito:</strong> \(f(x)-f^*<10^{-4}\) para Rosenbrock y \(f(x)-f^*<10^{-3}\) para Rastrigin, donde \(f^*=0\).</li>
+        </ul>
+        <p>Para comparar los métodos se reportan por separado las evaluaciones de la función \(n_f\) y las del gradiente \(n_{\nabla f}\). El proyecto usa el coste equivalente</p>
+        <p>\[N_{\mathrm{eq}}=n_f+c_{\nabla f}n_{\nabla f},\]</p>
+        <p>con \(c_{\nabla f}=2n\) cuando no se configura otro valor. Esto toma como referencia el coste de aproximar un gradiente mediante diferencias centrales. <strong>En este experimento los gradientes de GD son analíticos</strong>; por tanto, \(2n\) es una convención de comparación y no el número real de llamadas a la función objetivo para calcularlos.</p>
+        <p>Para cada combinación se calculan la media, desviación estándar muestral, mejor valor, peor valor, tasa de éxito y evaluaciones equivalentes medias. Las gráficas de distribución usan escala simétrica logarítmica (<code>symlog</code>) para que se puedan visualizar tanto valores muy pequeños como resultados alejados del óptimo.</p>
+
+        <h2>5. Resultados estadísticos</h2>
+        <p>La tabla resume las 16 combinaciones. La media, desviación, mejor y peor valor corresponden al valor final de la función objetivo. La tasa de éxito es el porcentaje de las 30 corridas que cumplió el umbral definido.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Función</th>
+                    <th>Dim.</th>
+                    <th>Método</th>
+                    <th>Media</th>
+                    <th>Desv. estándar</th>
+                    <th>Mejor</th>
+                    <th>Peor</th>
+                    <th>Éxito</th>
+                    <th>Eval. eq. media</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Rosenbrock</td><td>2</td><td>Descenso por gradiente</td><td>2.150e-04</td><td>1.933e-04</td><td>3.261e-06</td><td>0.0011</td><td>16.7%</td><td>4.000e+04</td></tr>
+                <tr><td>Rosenbrock</td><td>2</td><td>Algoritmo genético (GA)</td><td>1.051e-06</td><td>1.362e-06</td><td>3.942e-09</td><td>6.114e-06</td><td>100.0%</td><td>3.998e+04</td></tr>
+                <tr><td>Rosenbrock</td><td>2</td><td>Enjambre de partículas (PSO)</td><td>0</td><td>0</td><td>0</td><td>0</td><td>100.0%</td><td>4.000e+04</td></tr>
+                <tr><td>Rosenbrock</td><td>2</td><td>Evolución diferencial (DE)</td><td>0.0021</td><td>0.0068</td><td>0</td><td>0.0286</td><td>90.0%</td><td>4.000e+04</td></tr>
+                <tr><td>Rosenbrock</td><td>3</td><td>Descenso por gradiente</td><td>3.537e+02</td><td>1.119e+03</td><td>5.122e-05</td><td>4.835e+03</td><td>3.3%</td><td>3.600e+04</td></tr>
+                <tr><td>Rosenbrock</td><td>3</td><td>Algoritmo genético (GA)</td><td>3.024e-04</td><td>3.951e-04</td><td>2.782e-07</td><td>0.0014</td><td>46.7%</td><td>3.998e+04</td></tr>
+                <tr><td>Rosenbrock</td><td>3</td><td>Enjambre de partículas (PSO)</td><td>5.251e-08</td><td>7.145e-08</td><td>6.807e-11</td><td>3.308e-07</td><td>100.0%</td><td>4.000e+04</td></tr>
+                <tr><td>Rosenbrock</td><td>3</td><td>Evolución diferencial (DE)</td><td>0.1747</td><td>0.3113</td><td>0</td><td>1.3069</td><td>33.3%</td><td>4.000e+04</td></tr>
+                <tr><td>Rastrigin</td><td>2</td><td>Descenso por gradiente</td><td>15.0238</td><td>8.8581</td><td>3.9798</td><td>33.8283</td><td>0.0%</td><td>2.508e+02</td></tr>
+                <tr><td>Rastrigin</td><td>2</td><td>Algoritmo genético (GA)</td><td>6.898e-06</td><td>9.703e-06</td><td>2.174e-07</td><td>4.195e-05</td><td>100.0%</td><td>3.998e+04</td></tr>
+                <tr><td>Rastrigin</td><td>2</td><td>Enjambre de partículas (PSO)</td><td>0</td><td>0</td><td>0</td><td>0</td><td>100.0%</td><td>4.000e+04</td></tr>
+                <tr><td>Rastrigin</td><td>2</td><td>Evolución diferencial (DE)</td><td>0.0332</td><td>0.1817</td><td>0</td><td>0.995</td><td>96.7%</td><td>4.000e+04</td></tr>
+                <tr><td>Rastrigin</td><td>3</td><td>Descenso por gradiente</td><td>29.7159</td><td>13.4346</td><td>9.9496</td><td>58.702</td><td>0.0%</td><td>3.642e+02</td></tr>
+                <tr><td>Rastrigin</td><td>3</td><td>Algoritmo genético (GA)</td><td>3.246e-05</td><td>4.393e-05</td><td>1.926e-07</td><td>1.714e-04</td><td>100.0%</td><td>3.998e+04</td></tr>
+                <tr><td>Rastrigin</td><td>3</td><td>Enjambre de partículas (PSO)</td><td>0.0995</td><td>0.3036</td><td>0</td><td>0.995</td><td>90.0%</td><td>4.000e+04</td></tr>
+                <tr><td>Rastrigin</td><td>3</td><td>Evolución diferencial (DE)</td><td>0.1845</td><td>0.3855</td><td>0</td><td>1.0617</td><td>80.0%</td><td>4.000e+04</td></tr>
+            </tbody>
+        </table>
+
+        <h3>5.1. Distribución de los resultados</h3>
+        <p>Como los valores finales pueden variar varios órdenes de magnitud, las siguientes gráficas usan una escala <code>symlog</code>. Cada caja resume las 30 corridas independientes; los puntos que aparecen fuera de los bigotes son valores extremos según la regla del diagrama de caja.</p>
+
+        <div class="img-container">
+            <img src="../resultados/parte1/figuras/distribucion_rosenbrock_2D.png" alt="Rosenbrock 2D">
+            <div class="img-caption">Figura 1. Distribución de resultados para Rosenbrock en dos dimensiones. <em>Fuente: elaboración propia a partir de <code>corridas.csv</code>.</em></div>
+        </div>
+
+        <div class="img-container">
+            <img src="../resultados/parte1/figuras/distribucion_rosenbrock_3D.png" alt="Rosenbrock 3D">
+            <div class="img-caption">Figura 2. Distribución de resultados para Rosenbrock en tres dimensiones. <em>Fuente: elaboración propia a partir de <code>corridas.csv</code>.</em></div>
+        </div>
+
+        <div class="img-container">
+            <img src="../resultados/parte1/figuras/distribucion_rastrigin_2D.png" alt="Rastrigin 2D">
+            <div class="img-caption">Figura 3. Distribución de resultados para Rastrigin en dos dimensiones. <em>Fuente: elaboración propia a partir de <code>corridas.csv</code>.</em></div>
+        </div>
+
+        <div class="img-container">
+            <img src="../resultados/parte1/figuras/distribucion_rastrigin_3D.png" alt="Rastrigin 3D">
+            <div class="img-caption">Figura 4. Distribución de resultados para Rastrigin en tres dimensiones. <em>Fuente: elaboración propia a partir de <code>corridas.csv</code>.</em></div>
+        </div>
+
+        <h3>5.2. Tasa de éxito</h3>
+        <p>La tasa de éxito permite comparar cuántas corridas llegaron suficientemente cerca del óptimo, según los umbrales establecidos en el diseño experimental.</p>
+
+        <div class="img-container">
+            <img src="../resultados/parte1/figuras/tasa_exito_rosenbrock.png" alt="Tasa éxito Rosenbrock">
+            <div class="img-caption">Figura 5. Tasa de éxito en Rosenbrock para las dos dimensiones. <em>Fuente: elaboración propia a partir de <code>resumen.csv</code>.</em></div>
+        </div>
+
+        <div class="img-container">
+            <img src="../resultados/parte1/figuras/tasa_exito_rastrigin.png" alt="Tasa éxito Rastrigin">
+            <div class="img-caption">Figura 6. Tasa de éxito en Rastrigin para las dos dimensiones. <em>Fuente: elaboración propia a partir de <code>resumen.csv</code>.</em></div>
+        </div>
+
+        <h2>6. Discusión</h2>
+
+        <h3>6.1. Rosenbrock</h3>
+        <p>En dos dimensiones, GA y PSO alcanzaron el umbral de éxito en todas las corridas; DE lo alcanzó en el 90 %, mientras que GD lo hizo en el 16.7 %. Al pasar a tres dimensiones, PSO mantuvo un 100 % de éxito, pero GA bajó al 46.7 %, DE al 33.3 % y GD al 3.3 %. En esta configuración, el valle estrecho y curvo de Rosenbrock parece dificultar el avance del descenso por gradiente con paso fijo, especialmente al aumentar la dimensión.</p>
+        <p>La media de GD en tres dimensiones es alta y su desviación estándar también lo es, señal de que los resultados son muy variables. El hecho de que algunas corridas lleguen cerca del óptimo no implica que el método sea consistente en todas las inicializaciones.</p>
+
+        <h3>6.2. Rastrigin</h3>
+        <p>GD no alcanzó el umbral de éxito en ninguna corrida, ni en dos ni en tres dimensiones. Sus valores finales quedaron bastante por encima de cero, aunque el algoritmo a menudo terminó pronto porque la norma del gradiente se volvió pequeña. Esto muestra una limitación importante del criterio de parada: un gradiente pequeño no garantiza que se haya encontrado el mínimo global, especialmente en una función con muchos mínimos locales.</p>
+        <p>GA tuvo una tasa de éxito del 100 % en ambas dimensiones. PSO también alcanzó el 100 % en dos dimensiones, pero bajó al 90 % en tres. DE logró el 96.7 % en dos dimensiones y el 80 % en tres. Estos resultados son coherentes con la utilidad de los métodos poblacionales para explorar varias regiones del dominio, aunque no constituyen una garantía de que siempre encuentren el óptimo.</p>
+
+        <h3>6.3. Evaluaciones y coste</h3>
+        <p>La comparación debe considerar tanto el valor final como el número de evaluaciones. GD en Rastrigin consumió pocas evaluaciones porque se detuvo al detectar un gradiente pequeño, no porque hubiera alcanzado una solución satisfactoria. Por eso, un menor coste no debe interpretarse aisladamente como mejor rendimiento. GA, PSO y DE generalmente consumieron casi todo el presupuesto disponible, aunque algunas corridas alcanzaron el umbral antes; la columna <code>evals_exito_mediana</code> de <code>resumen.csv</code> permite estudiar cuántas evaluaciones equivalentes necesitaban las corridas exitosas.</p>
+        <p>Los costes equivalentes sirven para una comparación uniforme según la convención elegida. Como los gradientes usados por GD son analíticos, cambiar el coste asignado al gradiente puede cambiar la comparación presupuestaria; esta decisión debe quedar explícita al interpretar los resultados.</p>
+
+        <h3>6.4. Animaciones del proceso</h3>
+        <p>El repositorio incluye GIF de GD y DE en dos dimensiones para ambas funciones. Las animaciones muestran la trayectoria del punto (GD) o el movimiento de la población (DE) sobre las curvas de nivel. Se pueden regenerar con el comando principal del proyecto.</p>
+
+        <div class="img-container">
+            <img src="../resultados/gifs/rosenbrock_gd_seed42.gif" alt="GD Rosenbrock GIF">
+            <div class="img-caption">Figura 7. Trayectoria de descenso por gradiente sobre Rosenbrock en dos dimensiones. <em>Fuente: ejecución propia del algoritmo con la semilla configurada.</em></div>
+        </div>
+
+        <div class="img-container">
+            <img src="../resultados/gifs/rastrigin_de_seed42.gif" alt="DE Rastrigin GIF">
+            <div class="img-caption">Figura 8. Evolución de la población de DE sobre Rastrigin en dos dimensiones. <em>Fuente: ejecución propia del algoritmo con la semilla configurada.</em></div>
+        </div>
+
+        <ul class="file-list">
+            <li>resultados/gifs/rosenbrock_gd_seed42.gif</li>
+            <li>resultados/gifs/rosenbrock_de_seed42.gif</li>
+            <li>resultados/gifs/rastrigin_gd_seed42.gif</li>
+            <li>resultados/gifs/rastrigin_de_seed42.gif</li>
+        </ul>
+
+        <h2>7. Limitaciones</h2>
+        <ol>
+            <li>Solo se estudian dos funciones de prueba y dimensiones 2 y 3; los resultados no se deben generalizar a todos los problemas de optimización.</li>
+            <li>El rendimiento depende de los hiperparámetros seleccionados. No se realizó una búsqueda sistemática de hiperparámetros.</li>
+            <li>El umbral de éxito es una decisión experimental y afecta las tasas reportadas.</li>
+            <li>La equivalencia de coste asigna \(2n\) evaluaciones a cada gradiente aunque el código usa gradientes analíticos; es una convención para el presupuesto y debe interpretarse como tal.</li>
+            <li>Las figuras estadísticas se calculan a partir de los CSV de las corridas. Si se modifican los parámetros o la semilla, hay que volver a ejecutar el experimento y después generar las gráficas.</li>
+        </ol>
+
+        <h2>8. Conclusiones</h2>
+        <p>En los experimentos realizados, los métodos poblacionales obtuvieron tasas de éxito más altas que GD en ambas funciones, con una ventaja marcada en Rastrigin. La diferencia fue especialmente clara para GD, que puede detenerse en puntos estacionarios que no son el mínimo global. En Rosenbrock, aumentar la dimensión también redujo el éxito de GA y DE, mientras PSO mantuvo resultados consistentes en esta configuración.</p>
+        <p>No hay un método universalmente superior a partir de estos experimentos: la comparación depende de la función, dimensión, inicialización, hiperparámetros, presupuesto y criterio de éxito. Para una evaluación justa conviene leer en conjunto el valor objetivo, la dispersión entre corridas, la tasa de éxito y las evaluaciones consumidas.</p>
+
+        <h2>Referencias</h2>
+        <p>Goldberg, D. E. (1989). <em>Genetic algorithms in search, optimization, and machine learning</em>. Addison-Wesley.</p>
+        <p>Jamil, M., & Yang, X.-S. (2013). A literature survey of benchmark functions for global optimisation problems. <em>International Journal of Mathematical Modelling and Numerical Optimisation, 4</em>(2), 150–194. https://doi.org/10.1504/IJMMNO.2013.055204</p>
+        <p>Kennedy, J., & Eberhart, R. (1995). Particle swarm optimization. In <em>Proceedings of ICNN'95—International Conference on Neural Networks</em> (Vol. 4, pp. 1942–1948). IEEE. https://doi.org/10.1109/ICNN.1995.488968</p>
+        <p>Rosenbrock, H. H. (1960). An automatic method for finding the greatest or least value of a function. <em>The Computer Journal, 3</em>(3), 175–184. https://doi.org/10.1093/comjnl/3.3.175</p>
+        <p>Storn, R., & Price, K. (1997). Differential evolution—A simple and efficient heuristic for global optimization over continuous spaces. <em>Journal of Global Optimization, 11</em>(4), 341–359. https://doi.org/10.1023/A:1008202821328</p>
+    </div>
+    
+    <!-- Contenido Parte 2 -->
+    <div id="Parte2" class="tab-content">
+        <h2>1. Objetivo del Problema Combinatorio</h2>
+        <p>El objetivo es resolver el Problema del Viajante de Comercio (TSP) recorriendo las 47 capitales de la España peninsular en un circuito cerrado, minimizando el costo total del viaje. Para ello, se contrastan dos enfoques bioinspirados: <strong>Colonia de Hormigas (ACO)</strong> y un <strong>Algoritmo Genético (GA)</strong>.</p>
+
+        <h2>2. Formulación Matemática y Parámetros del Mundo Real</h2>
+        <h3>2.1. Ecuación de Costo del Viaje</h3>
+        <p>El costo total \( C_{ij} \) de transitar entre la ciudad \( i \) y la ciudad \( j \) se modeló incorporando tres factores reales:</p>
+        <p>\[ C_{ij} = (D_{ij} \times C_{km}) + (T_{ij} \times S_{hora}) + P_{ij} \]</p>
+        <ul>
+            <li>\( D_{ij} \): Distancia en kilómetros entre ciudades (Extraída mediante API OSRM).</li>
+            <li>\( C_{km} \): Costo operativo por kilómetro. Definido en <strong>0.072 €/km</strong>.</li>
+            <li>\( T_{ij} \): Tiempo de recorrido en horas (Extraído mediante API OSRM).</li>
+            <li>\( S_{hora} \): Valor del tiempo del vendedor. Base de <strong>10.6 €/h</strong>.</li>
+            <li>\( P_{ij} \): Costo de peajes en euros.</li>
+        </ul>
+
+        <h3>2.2. Justificación de los Datos</h3>
+        <ul>
+            <li><strong>Vehículo:</strong> Renault Clio Esprit Alpine (motor Full-hybrid). Consumo homologado de <strong>3.9 L/100km</strong>. <em>Fuente: Renault España (Oct 2026)</em>.</li>
+            <li><strong>Combustible:</strong> Precio de gasolina 95 sin plomo promediado en <strong>1.84 €/L</strong>. <em>Fuente: dieselogasolina.com (Oct 2026)</em>.</li>
+            <li><strong>Peajes:</strong> Lista depurada de autopistas de peaje administradas por el Estado (ej. AP-68, AP-9). <em>Fuente: Ministerio de Transportes y Movilidad Sostenible (Oct 2026)</em>.</li>
+            <li><strong>Sueldo del Vendedor:</strong> Promedio del mercado español para operarios de ruta: <strong>10.6 €/hora</strong>. <em>Fuente: Indeed España (Oct 2026)</em>.</li>
+        </ul>
+
+        <h2>3. Algoritmos Bioinspirados Implementados</h2>
+        <h3>3.1. Colonia de Hormigas (ACO)</h3>
+        <p>El algoritmo ACO construye rutas estocásticamente usando la regla de transición:</p>
+        <p>\[ p_{ij}^k = \frac{[\tau_{ij}]^\alpha [\eta_{ij}]^\beta}{\sum_{l \in N_i^k} [\tau_{il}]^\alpha [\eta_{il}]^\beta} \]</p>
+        <p>Donde \( \tau_{ij} \) es el rastro de feromona y \( \eta_{ij} \) es la información heurística (inversa del costo \( 1/C_{ij} \)). Las feromonas se evaporan a una tasa \( \rho = 0.1 \) y se actualizan sumando \( Q/L_k \) (donde \( L_k \) es el costo de la ruta de la hormiga \( k \)). Se configuró \( \alpha=1.0 \) y \( \beta=2.0 \) para dar alta prioridad a los tramos locales económicos.</p>
+
+        <h3>3.2. Algoritmo Genético (GA)</h3>
+        <p>Cada individuo es una permutación de 47 enteros. Debido a la naturaleza combinatoria, se aplicó un <strong>Cruce de Orden (Order Crossover - OX)</strong> para preservar los subciclos sin duplicar ciudades. La mutación se realizó mediante la <strong>inversión de subsecuencias</strong>, lo cual es matemáticamente ideal para desatar rutas cruzadas en el TSP. La población se fijó en 150 individuos con un 25% de probabilidad de mutación.</p>
+
+        <h2>4. Resultados y Análisis</h2>
+        <h3>4.1. Visualización del Recorrido (Mapa de España)</h3>
+        <p>A continuación se presenta la evolución de la mejor solución obtenida por la Colonia de Hormigas, proyectada sobre el mapa topológico (determinado por las coordenadas de las propias ciudades):</p>
+        
+        <div class="img-container">
+            <img src="../resultados/gifs/evolucion_aco.gif" alt="Evolución ACO">
+            <div class="img-caption">Figura 1. Evolución iterativa del recorrido cerrado óptimo por España (ACO).</div>
+        </div>
+        <h3>4.1. Análisis Visual de Convergencia (Colonia de Hormigas)</h3>
+        <p>A continuación se muestran tres instantes clave extraídos del GIF de la evolución del algoritmo ACO. Esto evidencia el comportamiento exploratorio y explotatorio de la colonia.</p>
+
+        <!-- FRAME INICIAL -->
+        <div class="img-container">
+            <img src="../resultados/parte2/figuras/frame_inicial.png" alt="Ruta inicial ACO">
+            <div class="img-caption">Figura 1a. Estado Inicial (Iteración 0).</div>
+        </div>
+        <p><strong>Análisis Inicial:</strong> Al inicio del algoritmo, los niveles de feromona \( \tau_{ij} \) son equitativos en toda la matriz. Esto provoca que la toma de decisiones probabilística dependa casi exclusivamente de la heurística local (avaricia por elegir el vecino más cercano), resultando en una ruta caótica, altamente ineficiente, llena de autointersecciones y trayectos muy costosos de lado a lado del país.</p>
+
+        <!-- FRAME MEDIO -->
+        <div class="img-container">
+            <img src="../resultados/parte2/figuras/frame_medio.png" alt="Ruta en etapa media ACO">
+            <div class="img-caption">Figura 1b. Estado Medio (Iteración 50).</div>
+        </div>
+        <p><strong>Análisis Medio (Convergencia en proceso):</strong> Gracias al depósito proporcional de feromonas \( \Delta \tau_{ij} = Q / L \), las aristas (caminos) que han formado parte de rutas con un costo global menor comienzan a dominar la probabilidad de transición. La evaporación \( \rho \) ha limpiado los "errores" del inicio. Visualmente, el algoritmo ya descubrió el circuito exterior de la costa de la península, pero sigue dudando en las rutas centrales (cerca de Madrid y las Castillas), generando aún pequeños cruces.</p>
+
+        <!-- FRAME FINAL -->
+        <div class="img-container">
+            <img src="../resultados/parte2/figuras/frame_final.png" alt="Ruta óptima final ACO">
+            <div class="img-caption">Figura 1c. Estado Final y Ruta Óptima (Iteración 100).</div>
+        </div>
+        <p><strong>Análisis de Ruta Óptima:</strong> La colonia ha convergido. Las feromonas se han cristalizado en una ruta altamente depurada donde ya no existen cruces. El algoritmo no solo minimizó la distancia bruta, sino que la figura demuestra cómo las hormigas integraron inteligentemente el costo del combustible, evitando vías excesivamente caras, consolidando un "anillo" natural alrededor de España con mínimas ineficiencias internas.</p>
+
+        <h3>4.2. Análisis de Sensibilidad: El valor del tiempo</h3>
+        <p>Se corrió el experimento variando el costo de la hora del vendedor desde 5 €/h hasta 40 €/h para observar el punto de quiebre donde el algoritmo decide pagar peajes caros con tal de ahorrar horas al volante.</p>
+        
+        <div class="img-container">
+            <img src="../resultados/parte2/figuras/analisis_sensibilidad_hora.png" alt="Sensibilidad Hora">
+            <div class="img-caption">Figura 2. Curvas de sensibilidad. La línea azul discontinua representa la cantidad de dinero gastada en peajes para cada valor del tiempo.</div>
+        </div>
+        
+        <p><strong>Discusión:</strong> A un costo de 5 €/h, el tiempo del vendedor es "barato", por lo que el algoritmo traza rutas por vías nacionales lentas para esquivar peajes (gasto en peajes casi nulo). Sin embargo, al cruzar el umbral de los 15-20 €/h, la gráfica azul muestra un aumento abrupto. El costo del tiempo se vuelve tan prohibitivo que al algoritmo le sale más económico transitar por autopistas de pago (como la AP-68 de Bilbao a Zaragoza), incrementando el gasto en peajes para minimizar las horas globales de conducción.</p>
+    </div>
+
+    <!-- Contenido Cacería -->
+    <div id="Alucinaciones" class="tab-content">
+        <h2>1. Cacería de Alucinaciones y Uso de IA</h2>
+        <p>Durante el desarrollo del proyecto, se utilizaron modelos de lenguaje (Gemini, ChatGPT) para generar estructuras base de código y consultar datos. Sin embargo, aplicando una revisión técnica estricta, detectamos las siguientes alucinaciones que habrían arruinado el proyecto de no ser atrapadas:</p>
+
+        <!--<h3>Hallazgo 1: Error Conceptual y Matemático en la Función de Costo</h3>
+        <ul>
+            <li><strong>Categoría:</strong> Matemáticas / Conceptos.</li>
+            <li><strong>Prompt utilizado:</strong> <em>"Construye la función de costo total para el problema del agente viajero (TSP) teniendo en cuenta el costo de la gasolina, los peajes y un presupuesto disponible para el salario por hora del viajero de 10.6 euros."</em></li>
+            <li><strong>Respuesta de la IA:</strong> Generó la fórmula restando el salario del presupuesto total, tratándolo como un limitante de disponibilidad: <code>costo_total = (dist * costo_km) + peajes - (tiempo * 10.6)</code>.</li>
+            <li><strong>Sospecha y Evidencia:</strong> Al evaluar rutas largas, el costo de minimización disminuía absurdamente a valores negativos. Un costo operativo (sueldo) matemáticamente no puede restar en una función objetivo que se desea minimizar.</li>
+            <li><strong>Corrección:</strong> Se ajustó la ecuación para que el sueldo sea una penalización aditiva: <code>(tiempo * valor_hora)</code>.</li>
+            <li><strong>Lección:</strong> La IA no comprende el contexto económico profundo de la Investigación de Operaciones. La función <em>fitness</em> siempre debe ser verificada a mano.</li>
+        </ul>
+
+        <h3>Hallazgo 2: Violación del requisito de reproducibilidad "Offline"</h3>
+        <ul>
+            <li><strong>Categoría:</strong> Código.</li>
+            <li><strong>Prompt utilizado:</strong> <em>"Genera un código en Python que dibuje la ruta de las capitales sobre un mapa real de España usando geopandas."</em></li>
+            <li><strong>Respuesta de la IA:</strong> Sugirió cargar el mapa base haciendo un llamado dinámico: <code>world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))</code>.</li>
+            <li><strong>Sospecha y Evidencia:</strong> Al ejecutar el script en local sin internet, falló con el error <code>AttributeError: module 'fiona' has no attribute 'path'</code>. El comando intentaba descargar vectores desde la web, violando el requerimiento del profesor de ejecutar el código sin APIs externas.</li>
+            <li><strong>Corrección:</strong> Se reescribió la visualización usando únicamente <code>matplotlib.pyplot</code>, aprovechando que los puntos coordenados de las 47 capitales ya dibujan orgánicamente el contorno de la península ibérica.</li>
+            <li><strong>Lección:</strong> Nunca confiar en datasets embebidos de librerías si el entorno de ejecución debe estar estrictamente aislado.</li>
+        </ul>
+
+        <h3>Hallazgo 3: Peajes fantasmas y desactualizados</h3>
+        <ul>
+            <li><strong>Categoría:</strong> Datos del mundo real.</li>
+            <li><strong>Prompt utilizado:</strong> <em>"Dame la lista actualizada a 2026 de los peajes en las rutas entre las 47 capitales de España peninsular para la matriz de costos."</em></li>
+            <li><strong>Respuesta de la IA:</strong> Incluyó cobros elevados para la Autopista AP-7 en el tramo Tarragona-Valencia y en la AP-4 (Sevilla-Cádiz).</li>
+            <li><strong>Sospecha y Evidencia:</strong> Conocimiento general de que España ha estado "rescatando" autopistas. Al contrastar con la fuente oficial (Ministerio de Transportes), evidenciamos que esas concesiones caducaron y los tramos ahora son gratuitos.</li>
+            <li><strong>Corrección:</strong> Se depuró manualmente el archivo <code>matriz_peajes_euros.csv</code> asignando costo 0.0 a dichas aristas.</li>
+            <li><strong>Lección:</strong> Los LLMs sufren de conocimientos congelados en el tiempo. Para infraestructura pública y precios, la fuente oficial primaria es irremplazable.</li>
+        </ul>
+
+        <h3>Hallazgo 4: Hiperparámetros que inducen convergencia prematura</h3>
+        <ul>
+            <li><strong>Categoría:</strong> Conceptos / Algoritmos.</li>
+            <li><strong>Prompt utilizado:</strong> <em>"Genera los hiperparámetros estándar para resolver el TSP de 47 nodos usando un Algoritmo Genético."</em></li>
+            <li><strong>Respuesta de la IA:</strong> Sugirió <code>prob_mutacion = 0.01</code> (1%) y <code>tamano_poblacion = 30</code>.</li>
+            <li><strong>Sospecha y Evidencia:</strong> El algoritmo se estancaba en la generación 20, devolviendo rutas subóptimas cruzadas sobre sí mismas (costos altísimos). Un espacio de búsqueda de \( 47! \) permutaciones requiere alta diversidad.</li>
+            <li><strong>Corrección:</strong> Se calibraron empíricamente elevando la mutación al <strong>25% (0.25)</strong> y la población a 150. Esto permitió escapar de los mínimos locales.</li>
+            <li><strong>Lección:</strong> Las configuraciones por defecto que la IA asume de problemas continuos no sirven para la alta rugosidad de los problemas combinatorios NP-Hard.</li>
+        </ul>
+
+        <h3>Hallazgo 5: Cruce destructivo de cromosomas (Listas)</h3>
+        <ul>
+            <li><strong>Categoría:</strong> Matemáticas / Código.</li>
+            <li><strong>Prompt utilizado:</strong> <em>"Escribe la función crossover para los padres en el Algoritmo Genético del problema del viajero."</em></li>
+            <li><strong>Respuesta de la IA:</strong> Implementó un cruce clásico de un punto (Single-Point Crossover), cortando un array a la mitad y pegándolo con la segunda mitad del otro padre.</li>
+            <li><strong>Sospecha y Evidencia:</strong> El gestor de matrices colapsó con un <code>KeyError</code> / <code>IndexError</code>. Al imprimir la ruta hija, tenía ciudades repetidas (ej: dos veces Madrid) y omitía otras (nodos huérfanos). Esto rompe la regla matemática fundamental del TSP (Hamiltoniano).</li>
+            <li><strong>Corrección:</strong> Se reemplazó el método por un <strong>Order Crossover (OX)</strong>, garantizando que el subciclo heredado de un padre se complete exclusivamente con los elementos faltantes en el orden del segundo padre.</li>
+            <li><strong>Lección:</strong> La IA confundió la optimización real de vectores (donde cruzar mitades es válido) con la optimización combinatoria, donde el orden y la exclusividad son leyes inmutables.</li>
+        </ul>
+    </div> -->
+
+    <!-- Script para cambiar de pestaña -->
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].className = tabcontent[i].className.replace(" active", "");
+            }
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).className += " active";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+</html>

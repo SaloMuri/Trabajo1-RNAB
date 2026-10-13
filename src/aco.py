@@ -25,7 +25,7 @@ Se fijan las semillas de random y numpy (Semilla = 28) para reproducir los resul
 import numpy as np
 import random
 
-Semilla=28
+Semilla = 28
 random.seed(Semilla)
 np.random.seed(Semilla)
 
@@ -41,9 +41,8 @@ class ColoniaHormigasTSP:
         self.num_ciudades = len(ciudades)
 
         # --- PARÁMETROS DEL ALGORITMO ---
-        self.num_hormigas = num_hormigas # Usualmente una por ciudad
+        self.num_hormigas = num_hormigas 
         self.num_iteraciones = num_iteraciones
-
         self.alpha = alpha  # Peso de la feromona (experiencia pasada)
         self.beta = beta    # Peso de la heurística/visibilidad (costo inmediato)
         self.rho = rho      # Tasa de evaporación (0.1 = 10% se evapora cada ciclo)
@@ -59,9 +58,10 @@ class ColoniaHormigasTSP:
         # Aquí guardaremos la evolución para el GIF (Punto 4 del enunciado)
         self.historial_mejores_rutas = []
 
-    def ejecutar(self):
-        print(f"\n🐜 Iniciando Colonia de Hormigas ({self.num_hormigas} hormigas, {self.num_iteraciones} iteraciones)...")
-
+    def ejecutar(self, verbose=True):
+        if verbose:
+            print(f"\n🐜 Iniciando Colonia de Hormigas ({self.num_hormigas} hormigas, {self.num_iteraciones} iteraciones)...")         
+        
         for iteracion in range(self.num_iteraciones):
             rutas = []
             costos = []
@@ -86,10 +86,12 @@ class ColoniaHormigasTSP:
             self.historial_mejores_rutas.append((list(self.mejor_ruta_global), self.mejor_costo_global))
 
             # Log de progreso cada 10 iteraciones
-            if iteracion % 10 == 0 or iteracion == self.num_iteraciones - 1:
+            if verbose and (iteracion % 10 == 0 or iteracion == self.num_iteraciones - 1):
                 print(f"Iteración {iteracion:03d} | Mejor Costo Histórico: {self.mejor_costo_global:.2f} €")
 
-        print(f"\n✅ Búsqueda terminada. Costo mínimo encontrado: {self.mejor_costo_global:.2f} €")
+        if verbose:
+            print(f"\n✅ Búsqueda terminada. Costo mínimo encontrado: {self.mejor_costo_global:.2f} €")
+            
         return self.mejor_ruta_global, self.mejor_costo_global
 
     def _construir_ruta(self):

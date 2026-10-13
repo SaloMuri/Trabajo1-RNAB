@@ -1,7 +1,5 @@
 # Parte 1. Optimización numérica: comparación de métodos
 
-> **Borrador para revisión del equipo.** Antes de publicar, agreguen los nombres de los integrantes, el enlace al repositorio y revisen que las figuras se vean correctamente en la plataforma donde publiquen el informe.
-
 ## 1. Objetivo
 
 Comparar un método basado en gradiente con tres métodos metaheurísticos para minimizar dos funciones de prueba, Rosenbrock y Rastrigin, en dos y tres dimensiones. Se comparan el valor final de la función objetivo, la variabilidad entre corridas, la tasa de éxito y el número de evaluaciones utilizadas.
