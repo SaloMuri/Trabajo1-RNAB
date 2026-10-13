@@ -396,27 +396,64 @@
         <p><strong>Discusión:</strong> A un costo de 5 €/h, el tiempo del vendedor es "barato", por lo que el algoritmo traza rutas por vías nacionales lentas para esquivar peajes (gasto en peajes casi nulo). Sin embargo, al cruzar el umbral de los 15-20 €/h, la gráfica azul muestra un aumento abrupto. El costo del tiempo se vuelve tan prohibitivo que al algoritmo le sale más económico transitar por autopistas de pago (como la AP-68 de Bilbao a Zaragoza), incrementando el gasto en peajes para minimizar las horas globales de conducción.</p>
     </div>
 
-    <!-- Contenido Cacería -->
+    <!-- ========================================== -->
+    <!-- PESTAÑA 3: CACERÍA DE ALUCINACIONES -->
+    <!-- ========================================== -->
     <div id="Alucinaciones" class="tab-content">
-        <h2>Verificación de afirmaciones y uso de IA</h2>
-        <p>Esta sección registra comprobaciones concretas realizadas sobre las afirmaciones matemáticas y experimentales del proyecto. La verificación no demuestra que una herramienta de IA nunca se equivoque; sirve para evitar aceptar afirmaciones sin contrastarlas con fórmulas, código o resultados reproducibles.</p>
-        <table>
-            <thead><tr><th>Categoría</th><th>Afirmación comprobada</th><th>Verificación</th><th>Resultado</th></tr></thead>
-            <tbody>
-                <tr><td>Matemática</td><td>Rosenbrock tiene mínimo global 0 en (1,…,1).</td><td>Reescritura de la función como suma de términos no negativos que se anulan en ese punto.</td><td>Consistente con la fórmula implementada.</td></tr>
-                <tr><td>Matemática</td><td>Rastrigin tiene mínimo global 0 en el origen.</td><td>Reescritura de cada contribución como xᵢ² + 10[1 − cos(2πxᵢ)], que es no negativa.</td><td>Consistente con la fórmula implementada.</td></tr>
-                <tr><td>Código / numérica</td><td>Los gradientes analíticos coinciden aproximadamente con diferencias centrales.</td><td>100 puntos por función y dimensión; h = 10⁻⁶.</td><td>Error absoluto máximo observado: 1.026 × 10⁻⁶.</td></tr>
-                <tr><td>Experimentos</td><td>Hay 480 corridas completas.</td><td>Recuento de filas y agrupación por función, dimensión y método.</td><td>480 registros, 16 configuraciones y 30 corridas por configuración.</td></tr>
-                <tr><td>Presupuesto</td><td>Ninguna corrida excede el límite.</td><td>Inspección de los costes equivalentes en los registros.</td><td>Máximo observado: 40 000.</td></tr>
-                <tr><td>Estadística</td><td>El resumen coincide con los registros individuales.</td><td>Recalculo de media, desviación estándar, mejor, peor, tasa de éxito y coste.</td><td>Las estadísticas publicadas se generaron de nuevo desde los CSV.</td></tr>
-                <tr><td>Pruebas</td><td>Los casos cubiertos por la suite pasan.</td><td>Ejecución de <code>python -m pytest -q</code>.</td><td>32 pruebas superadas.</td></tr>
-            </tbody>
-        </table>
-        <p><em>Tabla. Cacería de afirmaciones para la Parte 1. Fuente: auditoría del código y de los archivos de resultados.</em></p>
-        <h3>Uso de herramientas de IA</h3>
-        <p>Se utilizó ChatGPT como apoyo para revisar la coherencia entre la explicación y el código, proponer comprobaciones y mejorar la redacción. La implementación y los resultados se contrastaron mediante ejecución local del código, pruebas automatizadas, revisión de los CSV y referencias bibliográficas. El equipo debe revisar la versión final y ajustar esta declaración a las normas de la asignatura y al uso real de las herramientas.</p>
-    </div>
+        <h2>Cacería de la Alucinación y Uso de Inteligencia Artificial</h2>
+        <p>Como exige la directriz del curso, documentamos rigurosamente los errores lógicos, matemáticos y de datos generados por las herramientas de IA durante el desarrollo del trabajo, demostrando el criterio de verificación del equipo.</p>
 
+<div class="hallazgo-box">
+            <h3>Hallazgo 1: Cálculo erróneo de distancias (Línea recta vs. Ruta real)</h3>
+            <p><strong>Categoría:</strong> Matemáticas / Conceptos / Datos del mundo real</p>
+            <p><strong>Prompt literal:</strong> <em>"Podrías darme las distancias entre cada capital para meterla a la matriz"</em></p>
+            <p><strong>Respuesta de la IA:</strong> "El archivo tiene dos hojas: Matriz_Distancias_Km: La cuadrícula completa de 47x47 con las distancias en línea recta calculadas (fórmula Haversine) entre cada par de ciudades. Coordenadas: La latitud y longitud de las 47 capitales peninsulares por si necesitas recalcular algo..."</p>
+            <p><strong>Evidencia y Corrección:</strong> Al comparar dos matrices generadas por distintas herramientas de IA, fue posible visualizar que los datos de distancia presentaban diferencias extremas. Una de las IA generó una matriz puramente simétrica asumiendo el mundo geográfico sin obstáculos. Al establecer una ruta de control (Ourense - León) en el mapa oficial de carreteras, evidenciamos el fallo: la IA calculó la distancia de vuelo de un pájaro (192.01 km), ignorando la ruta real de conducción (297.85 km). Inyectar esta matriz "Haversine" habría subestimado los costos drásticamente, haciendo inútil el algoritmo de optimización para un caso de negocio real.</p>
+            
+            <div class="img-container">
+                <img src="../resultados/parte2/figuras/calculo_linea_recta.png" alt="Cálculo en línea recta Ourense a León">
+                <div class="img-caption">Figura 5. Medición en línea recta (192.01 km), metodología errónea deducida por la IA.</div>
+            </div>
+            
+            <div class="img-container">
+                <img src="../resultados/parte2/figuras/calculo_ruta_real.png" alt="Cálculo de ruta real Ourense a León">
+                <div class="img-caption">Figura 6. Medición de ruta real por carretera (297.85 km), necesaria para la precisión del modelo de costos.</div>
+            </div>
+        </div>
+
+        <div class="hallazgo-box">
+            <h3>Hallazgo 2: Creación de Matriz de Peajes</h3>
+            <p><strong>Categoría:</strong> Código / Datos del mundo real</p>
+            <p><strong>Prompt literal:</strong> <em>"Subida de datos (pdf):Además para poder construir mejor la matriz de peajes, te subi la información de los costos de los peajes actuales, en estos pdf, nuestro carro es un vehiculo ligero y por la forma de implementar el algoritmo, siempre estara en la cuota de 1 y 2 paso. Por la subida de archivos faltan 2 datos de peajes, aún no crees la matriz, solo recibe los docs y espera los otros 2. Posterior a creación de la matriz: Cómo hiciste el orden de los peajes, rutas intermedias? ya que algunos de los pdf no necesariamente son ciudades capitales. Explicame esto y de que forma lo controlaste."</em></p>
+            <p><strong>Respuesta de la IA:</strong>¡Claro que sí! Esa es una pregunta excelente, porque el manejo de los peajes cuando los tramos no conectan exactamente de capital a capital es uno de los mayores desafíos en el ruteo de este tipo de problemas.¿Cómo modelamos los peajes intermedios?El truco principal fue apoyarnos en que el ruteo real ya lo hizo la API de OSRM (Open Source Routing Machine). Cuando la API calculó la distancia y el tiempo entre, por ejemplo, Madrid y Segovia, trazó automáticamente la ruta más óptima por carretera.Nosotros solo necesitamos "penalizar" económicamente esa ruta precalculada inyectando el valor del peaje en nuestra matriz de 47x47. El proceso conceptual (que documentaremos en el informe final) fue el siguiente:Mapeo de Vías a Capitales: Leí los documentos en PDF. Los peajes están definidos por tramos entre localidades (ej. Campomanes y León, o Villalba y Adanero). La pregunta clave es: ¿Qué capitales de nuestra lista de 47 usan de forma natural ese tramo para conectarse entre sí?   El Caso de la AP-66 (Campomanes-León): Campomanes es un pueblo en Asturias, pero es la puerta de entrada natural hacia Oviedo. Por lo tanto, si un vendedor viaja de Oviedo a León, obligatoriamente va a usar ese tramo de la autopista del Huerna. Por eso en la matriz programé: ('Oviedo', 'León', 16.20).   El Caso de la AP-6 (Villalba-Adanero) y sus ramales AP-51 y AP-61: Esta es la salida clave del Noroeste de Madrid. Si vas de Madrid a Valladolid o a Zamora, pasas por el tronco central (15,70 €). Si vas de Madrid a Segovia, usas el ramal AP-61 (8,60 €). Si vas de Madrid a Ávila, usas el ramal AP-51 (11,85 €). Por eso asigné esos costos a las conexiones directas desde Madrid.   El Caso de la AP-9 y AP-53 (Galicia): El eje atlántico. Si conectas A Coruña con Pontevedra, pasas por la AP-9 (sumando los tramos: 8,80 € hasta Santiago + 7,55 € hasta Pontevedra = 16,35 €). Si vas hacia Ourense desde el norte, usas la AP-53 desde Santiago (7,25 €).   Limitación asumida: No programamos todos los pares de ciudades de España. Solo penalizamos las "conexiones lógicas más directas" entre capitales adyacentes. El algoritmo (ACO o Genético) aprenderá que ir de Madrid a Segovia es caro por el peaje, e intentará buscar si es más barato hacer Madrid -> Ávila -> Segovia, por ejemplo. <code>gpd.datasets.get_path('naturalearth_lowres')</code>.</p>
+            <p><strong>Evidencia y Corrección:</strong> Al obtener la matriz de peajes, se evidenciaba que podia haber alucinaciones al momento de tomar las rutas que eran intermedias entre cada capital y la forma en la que estas conectaban; así, decidimos comparar con el mapa de carreteras oficial y verificar en donde se ubicaban los peajes, cuales serian las ciudades que si o si los tomarian y conservas el costo estimado. </p>
+        </div>
+ <!--
+        <div class="hallazgo-box">
+            <h3>Hallazgo 3: Inclusión de peajes abolidos en España</h3>
+            <p><strong>Categoría:</strong> Datos del mundo real</p>
+            <p><strong>Prompt literal:</strong> <em>"Dame los peajes activos en 2026 para las rutas viales entre capitales españolas."</em></p>
+            <p><strong>Respuesta de la IA:</strong> Asignó tarifas de cobro vigentes a tramos de la Autopista AP-7 (Tarragona-Alicante) y la AP-4 (Sevilla-Cádiz).</p>
+            <p><strong>Evidencia y Corrección:</strong> Con base en los reales decretos del Ministerio de Transportes, dichos peajes expiraron y son libres de pago. Se ajustó el archivo <code>matriz_peajes_euros.csv</code> fijando en cero dichos trayectos.</p>
+        </div>
+
+        <div class="hallazgo-box">
+            <h3>Hallazgo 4: Tasa de mutación insuficiente para espacios combinatorios</h3>
+            <p><strong>Categoría:</strong> Algoritmos / Conceptos</p>
+            <p><strong>Prompt literal:</strong> <em>"Dame los hiperparámetros óptimos para un Algoritmo Genético resolviendo el TSP de 47 nodos."</em></p>
+            <p><strong>Respuesta de la IA:</strong> Sugirió una tasa de mutación estándar de <code>0.01</code> (1%).</p>
+            <p><strong>Evidencia y Corrección:</strong> Con 1% de mutación, el genético caía en estancamiento temprano (mínimos locales). Se calibró empíricamente al <strong>25% (0.25)</strong>, logrando explorar con éxito el espacio de \(47!\) combinaciones.</p>
+        </div>
+
+        <div class="hallazgo-box">
+            <h3>Hallazgo 5: Uso de cruce numérico destructivo (Single-Point) en permutaciones</h3>
+            <p><strong>Categoría:</strong> Matemáticas / Código</p>
+            <p><strong>Prompt literal:</strong> <em>"Escribe el operador de cruce (crossover) para el Algoritmo Genético del TSP."</em></p>
+            <p><strong>Respuesta de la IA:</strong> Aplicó un cruce clásico de un solo punto cortando listas de números reales.</p>
+            <p><strong>Evidencia y Corrección:</strong> El código arrojaba errores porque generaba hijos con ciudades repetidas y otras ausentes, violando la regla hamiltoniana. Se implementó un operador de <strong>Cruce de Orden (OX)</strong> que respeta la permutación única de las ciudades.</p>
+        </div>
+    </div>
+                -->
     <!-- Script para cambiar de pestaña -->
     <script>
         function openTab(evt, tabName) {
