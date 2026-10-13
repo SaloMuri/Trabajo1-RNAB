@@ -5,7 +5,25 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 from matplotlib.animation import FuncAnimation, PillowWriter
+import json
+from pathlib import Path
 from src.funciones import FUNCIONES
+import matplotlib.patheffects as pe
+
+# Contorno de España guardado en el repo (sin internet): data/ESP.geo.json
+RUTA_CONTORNO = Path(__file__).resolve().parent.parent / "data" / "tsp" / "ESP.geo.json"
+
+
+def _cargar_contorno_espana(ruta=RUTA_CONTORNO):
+    """Lee el contorno de España del archivo local. Si falla, devuelve [] (se dibuja sin fondo)."""
+    try:
+        with open(ruta, encoding="utf-8") as f:
+            geom = json.load(f)["features"][0]["geometry"]
+        poligonos = [geom["coordinates"]] if geom["type"] == "Polygon" else geom["coordinates"]
+        return [np.array(p[0]) for p in poligonos]
+    except Exception as e:
+        print(f"⚠️ No se pudo cargar el contorno de España ({e}). Se dibuja sin fondo.")
+        return []
 
 def _cuadros_a_dibujar(total, max_cuadros):
     """Indices de las iteraciones que se dibujan (espaciados si hay demasiadas)."""
@@ -74,6 +92,18 @@ def generar_gif_evolucion(algoritmo, gestor, filename="evolucion.gif", titulo_ba
 
     # 2. Configurar figura
     fig, ax = plt.subplots(figsize=(10, 8))
+    contorno = _cargar_contorno_espana()
+
+    # Nombres de las ciudades (sin la parte despues de "/") e inicio fijo para todos los cuadros
+    nombres = [n.split("/")[0] for n in df_coord_sorted.index]
+    inicio_fijo = algoritmo.historial_mejores_rutas[-1][0][0]
+
+    def rotar(ruta):
+       """Reordena el ciclo para que empiece siempre en inicio_fijo (no cambia el recorrido)."""
+       ciclo = list(ruta[:-1])
+       k = ciclo.index(inicio_fijo)
+       ciclo = ciclo[k:] + ciclo[:k]
+       return ciclo + [ciclo[0]]
 
     # Tomamos un frame cada 10 iteraciones/generaciones para que el GIF no sea eterno
     frames_a_mostrar = algoritmo.historial_mejores_rutas[::10]
@@ -85,6 +115,7 @@ def generar_gif_evolucion(algoritmo, gestor, filename="evolucion.gif", titulo_ba
     def update(frame_data):
         ax.clear()
         ruta_indices, costo = frame_data
+        ruta_indices = rotar(ruta_indices)
 
         # Fondo claro
         fig.patch.set_facecolor('#f0f4f8')
@@ -94,8 +125,16 @@ def generar_gif_evolucion(algoritmo, gestor, filename="evolucion.gif", titulo_ba
         ax.set_xlim([-10, 4.5])
         ax.set_ylim([35.5, 44.5])
 
+        for pol in contorno:
+           ax.fill(pol[:, 0], pol[:, 1], color="white", ec="#9aa5b1", lw=1, zorder=0)
+
         # Dibujar las 47 capitales como puntos base (color gris claro)
         ax.scatter(lons, lats, c='lightgray', s=30, zorder=2)
+
+        # Nombres de las ciudades
+        for x, y, nom in zip(lons, lats, nombres):
+            ax.annotate(nom, (x, y), xytext=(4, 3), textcoords="offset points", fontsize=7,
+                     zorder=7, path_effects=[pe.withStroke(linewidth=2, foreground="white")])
 
         # Dibujar las capitales de la ruta óptima de este frame (color rojo oscuro)
         ruta_lons = [lons[i] for i in ruta_indices]
