@@ -2,9 +2,9 @@
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import numpy as np
 from matplotlib.animation import FuncAnimation, PillowWriter
-
 from src.funciones import FUNCIONES
 
 
@@ -61,29 +61,65 @@ def crear_gif(funcion, trayectoria, ruta, titulo, es_poblacion, max_cuadros=60, 
     animacion = FuncAnimation(fig, dibujar, frames=len(cuadros), blit=False)
     animacion.save(ruta, writer=PillowWriter(fps=fps), dpi=70)
     plt.close(fig)
-    
+
+# Combinatoria (Hormigas y Evolutivo)
+
 def generar_gif_evolucion(algoritmo, gestor, filename="evolucion.gif", titulo_base="Algoritmo"):
-    print(f"🎨 Generando GIF de {titulo_base}... (puede tardar unos segundos)")
+    """Crea una animación GIF mostrando la evolución de la ruta uniendo las capitales."""
+    print(f"🎨 Generando GIF de {titulo_base}... (tardará unos segundos)")
+
+    # 1. Preparar coordenadas
     df_coord_sorted = gestor.df_coord.set_index('ciudad').reindex(gestor.ciudades)
     lats = df_coord_sorted['latitud'].values
     lons = df_coord_sorted['longitud'].values
+
+    # 2. Configurar figura
     fig, ax = plt.subplots(figsize=(10, 8))
+
+    # Tomamos un frame cada 10 iteraciones/generaciones para que el GIF no sea eterno
     frames_a_mostrar = algoritmo.historial_mejores_rutas[::10]
+    
+    # Aseguramos que el frame final siempre esté
     if algoritmo.historial_mejores_rutas[-1] not in frames_a_mostrar:
         frames_a_mostrar.append(algoritmo.historial_mejores_rutas[-1])
+
     def update(frame_data):
         ax.clear()
         ruta_indices, costo = frame_data
-        ax.scatter(lons, lats, c='red', s=20, zorder=5)
-        
+
+        # Fondo claro
+        fig.patch.set_facecolor('#f0f4f8')
+        ax.set_facecolor('#f0f4f8')
+
+        # Límites geográficos de España peninsular para enmarcar bien la gráfica
+        ax.set_xlim([-10, 4.5])
+        ax.set_ylim([35.5, 44.5])
+
+        # Dibujar las 47 capitales como puntos base (color gris claro)
+        ax.scatter(lons, lats, c='lightgray', s=30, zorder=2)
+
+        # Dibujar las capitales de la ruta óptima de este frame (color rojo oscuro)
         ruta_lons = [lons[i] for i in ruta_indices]
         ruta_lats = [lats[i] for i in ruta_indices]
-        ax.plot(ruta_lons, ruta_lats, c='blue', linewidth=1.5, zorder=4, alpha=0.8)
-        
+        ax.scatter(ruta_lons, ruta_lats, c='darkred', s=40, zorder=5)
+
+        # Conectar los puntos de la ruta en azul (simula el recorrido)
+        ax.plot(ruta_lons, ruta_lats, c='#1f77b4', linewidth=2, zorder=4, alpha=0.8)
+
+        # Marcar la ciudad de inicio/fin en verde y un poco más grande
+        ax.scatter(ruta_lons[0], ruta_lats[0], c='green', s=100, zorder=6, marker='*')
+
+        # Títulos y formato
         iteracion_idx = algoritmo.historial_mejores_rutas.index(frame_data)
-        ax.set_title(f"{titulo_base} - Iteración/Gen {iteracion_idx}\nCosto: {costo:,.2f} €", fontsize=14, fontweight='bold')
+        ax.set_title(f"{titulo_base} - Evolución (Iter/Gen: {iteracion_idx})\nCosto de esta ruta: {costo:,.2f} €",
+                     fontsize=14, fontweight='bold', color='#333333')
+        
+        # Ocultar los ejes para que parezca un mapa
         ax.axis('off')
+
+    # Generar y guardar la animación
     ani = animation.FuncAnimation(fig, update, frames=frames_a_mostrar, repeat=False)
     ani.save(filename, writer='pillow', fps=4)
     plt.close()
+
     print(f"✅ GIF guardado como: '{filename}'.")

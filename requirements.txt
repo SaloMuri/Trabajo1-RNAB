@@ -1,8 +1,20 @@
-# Versiones fijas. Probadas con Python 3.12 (funcionan desde Python 3.10).
-numpy==2.2.6
-pandas==2.3.3
-matplotlib==3.10.8
-pillow==11.3.0
-pyyaml==6.0.3
-pytest==8.4.2
-joblib==1.5.3
+# Lógica, matemáticas y matrices
+numpy==1.26.4
+
+# Manejo de datos y lectura de CSVs/Excel
+pandas==2.2.2
+openpyxl==3.1.2
+
+# Gráficas y generación de animaciones (GIFs)
+matplotlib==3.8.4
+Pillow==10.3.0
+
+# Lectura de archivos de configuración (.yaml)
+PyYAML==6.0.1
+
+# Consultas web (Usado en el preprocesamiento con OSRM)
+requests==2.31.0
+
+# Herramientas geoespaciales (Para el Paso B: Dibujar el mapa de España)
+geopandas==0.14.3
+shapely==2.0.4

@@ -1,67 +1,41 @@
-import yaml
-import random
+import pandas as pd
 import numpy as np
-from src.gestor_costos import GestorCostosTSP
-from src.aco import ColoniaHormigasTSP
-from src.ga_tsp import AlgoritmoGeneticoTSP
-from src.estadisticas import generar_informe_final
-from src.animacion import generar_gif_evolucion
 
-def correr_experimentos(config_path="configs/parte2.yaml"):
-    # 1. Cargar Configuración
-    with open(config_path, "r") as file:
-        config = yaml.safe_load(file)
+class GestorCostosTSP:
+    def __init__(self, ruta_distancias, ruta_tiempos, ruta_peajes, ruta_coord, 
+                 valor_hora=10.6, consumo_l_100km=3.9, precio_litro=1.84, ruta_export="matriz_costos.csv"):
+        self.df_dist = pd.read_csv(ruta_distancias, index_col=0)
+        self.df_tiemp = pd.read_csv(ruta_tiempos, index_col=0)
+        self.df_peajes = pd.read_csv(ruta_peajes, index_col=0)
+        self.df_coord = pd.read_csv(ruta_coord)
+        self.ruta_export = ruta_export
+
+        self.ciudades = self.df_dist.columns.tolist()
+        self.num_ciudades = len(self.ciudades)
+
+        self.valor_hora = valor_hora
+        self.consumo_l_100km = consumo_l_100km
+        self.precio_litro = precio_litro
+
+        self.matriz_costos = np.zeros((self.num_ciudades, self.num_ciudades))
+        self.matriz_visibilidad = np.zeros((self.num_ciudades, self.num_ciudades))
+
+    def calcular_costo_por_km(self):
+        return (self.consumo_l_100km / 100.0) * self.precio_litro
+
+    def construir_matrices(self, verbose=True):
+        costo_km = self.calcular_costo_por_km()
+        distancias = self.df_dist.to_numpy()
+        tiempos = self.df_tiemp.to_numpy()
+        peajes = self.df_peajes.to_numpy()
+
+        self.matriz_costos = (tiempos * self.valor_hora) + (distancias * costo_km) + peajes
         
-    # 2. Fijar Semillas Globales
-    semilla = config["semilla"]
-    random.seed(semilla)
-    np.random.seed(semilla)
-    print(f"🌱 Entorno configurado con semilla: {semilla}")
+        df_export = pd.DataFrame(self.matriz_costos, index=self.df_dist.index, columns=self.df_dist.columns)
+        df_export.to_csv(self.ruta_export)
 
-    # 3. Inicializar Gestor
-    r = config["archivos"]
-    v = config["vehiculo"]
-    gestor = GestorCostosTSP(
-        ruta_distancias=r["distancias"],
-        ruta_tiempos=r["tiempos"],
-        ruta_peajes=r["peajes"],
-        ruta_coord=r["coordenadas"],
-        ruta_export=r["export_costos"],
-        valor_hora=v["valor_hora"],
-        consumo_l_100km=v["consumo_l_100km"],
-        precio_litro=v["precio_litro"]
-    )
-    gestor.construir_matrices()
-
-    # 4. Ejecutar Colonia de Hormigas
-    conf_aco = config["hormigas"]
-    aco = ColoniaHormigasTSP(
-        matriz_costos=gestor.matriz_costos,
-        matriz_visibilidad=gestor.matriz_visibilidad,
-        ciudades=gestor.ciudades,
-        num_hormigas=conf_aco["num_hormigas"],
-        num_iteraciones=conf_aco["num_iteraciones"],
-        alpha=conf_aco["alpha"],
-        beta=conf_aco["beta"],
-        rho=conf_aco["rho"],
-        q=conf_aco["q"]
-    )
-    ruta_aco, costo_aco = aco.ejecutar()
-    generar_informe_final(ruta_aco, gestor, nombre_algo="ACO")
-    generar_gif_evolucion(aco, gestor, filename="resultados/gifs/evolucion_aco.gif", titulo_base="Colonia de Hormigas")
-
-    # 5. Ejecutar Genético
-    conf_ga = config["genetico"]
-    ga = AlgoritmoGeneticoTSP(
-        gestor=gestor,
-        tamano_poblacion=conf_ga["tamano_poblacion"],
-        num_generaciones=conf_ga["num_generaciones"],
-        prob_mutacion=conf_ga["prob_mutacion"],
-        elitismo=conf_ga["elitismo"]
-    )
-    ruta_ga, costo_ga = ga.ejecutar()
-    generar_informe_final(ruta_ga, gestor, nombre_algo="Genético")
-    generar_gif_evolucion(ga, gestor, filename="resultados/gifs/evolucion_ga.gif", titulo_base="Algoritmo Genético")
-
-if __name__ == "__main__":
-    correr_experimentos()
+        np.fill_diagonal(self.matriz_costos, np.inf)
+        self.matriz_visibilidad = 1.0 / self.matriz_costos
+        
+        if verbose:
+            print(f"\n✅ Matriz de Costos Maestra (47x47) generada y guardada en {self.ruta_export}")
