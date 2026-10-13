@@ -7,7 +7,6 @@ import numpy as np
 from matplotlib.animation import FuncAnimation, PillowWriter
 from src.funciones import FUNCIONES
 
-
 def _cuadros_a_dibujar(total, max_cuadros):
     """Indices de las iteraciones que se dibujan (espaciados si hay demasiadas)."""
     if total <= max_cuadros:

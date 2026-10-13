@@ -6,10 +6,10 @@
 
 # ---------------------------------- GENERAL -------------------------------
 semilla: 42                  # semilla base; con la misma semilla salen los mismos resultados
-corridas: 5                # corridas independientes por configuracion (el enunciado pide >= 30)
+corridas: 5                #corridas independientes por configuracion (el enunciado pide >= 30)
 funciones: [rosenbrock, rastrigin]
 dimensiones: [2, 3]
-metodos: [gd, ga, pso, de]   # gd = descenso por gradiente, ga = algoritmo genetico, pso, de
+metodos: [gd, ga, pso, de]   # gd = descenso por gradiente, ga = algoritmo genetico, pso=optimizacion por enjambre de partículas, de=evolucion diferencial
 carpeta_resultados: resultados/parte1_demo
 
 # ------------------------- PRESUPUESTO Y CRITERIO DE EXITO -----------------

@@ -6,17 +6,15 @@ import random
 import time
 from pathlib import Path
 import sys
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
-
-RAIZ = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(RAIZ))      # la raíz del proyecto, para poder hacer "from src..."
-
 from src.aco import ColoniaHormigasTSP
 from src.gestor_costos import GestorCostosTSP
+
+RAIZ = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(RAIZ))     
 
 # ------------------------------------------------------------------
 # Rutas del proyecto
@@ -50,9 +48,9 @@ class ColoniaHormigasRapida(ColoniaHormigasTSP):
         libres = np.ones(n, dtype=bool)
         libres[list(visitadas)] = False
 
-        tau = self.feromonas[actual] ** self.alpha
-        eta = self.matriz_visibilidad[actual] ** self.beta
-        prob = tau * eta * libres
+        tau = self.feromonas[actual] ** self.alpha #Tau = Feromonos 
+        eta = self.matriz_visibilidad[actual] ** self.beta #Eta = inverso a distancia
+        prob = tau * eta * libres 
 
         suma = prob.sum()
         if suma == 0 or not np.isfinite(suma):

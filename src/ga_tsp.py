@@ -10,14 +10,11 @@ Parametros (valores por defecto):
   elitismo = True (el mejor individuo pasa sin cambios a la siguiente generacion).
 
 Resumen de lo que hace:
-  ejecutar            : crea una poblacion aleatoria y, en cada generacion, evalua los costos,
-                        actualiza el mejor global y genera la nueva poblacion por seleccion,
-                        cruce y mutacion. Devuelve (ruta, costo).
+  ejecutar            : crea una poblacion aleatoria y, en cada generacion, evalua los costos, actualiza el mejor global y genera la nueva poblacion por selección cruce y mutacion. Devuelve (ruta, costo).
   _crear_individuo    : permutacion aleatoria de las ciudades.
   _calcular_costo     : suma los costos de los tramos consecutivos y el de regreso al inicio.
   _seleccion_torneo   : elige k = 3 individuos al azar y gana el de menor costo.
-  _cruce_ox           : Order Crossover (OX1). Copia un tramo del padre 1 y completa con las
-                        ciudades faltantes en el orden del padre 2.
+  _cruce_ox           : Order Crossover (OX1). Copia un tramo del padre 1 y completa con las ciudades faltantes en el orden del padre 2.
   _mutar_inversion    : con probabilidad prob_mutacion invierte un sub-tramo aleatorio.
 
 Guarda el historial de mejores rutas por generacion para generar el GIF, con el mismo formato

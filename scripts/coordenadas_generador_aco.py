@@ -2,10 +2,10 @@ from readline import redisplay
 import pandas as pd
 import unicodedata
 
-# 1. Cargar datos
-df = pd.read_csv("data/tsp/MUNICIPIOS.csv", sep=";", encoding="latin1")
+# 1. Cargar datos de municipios
+df = pd.read_csv("data/tsp/MUNICIPIOS.csv", sep=";", encoding="latin1") 
 
-# 2. Capitales objetivo
+# 2. Capitales objetivo 
 capitales = [
     "A Coruña", "Albacete", "Alacant/Alicante", "Almería", "Ávila",
     "Badajoz", "Barcelona", "Bilbao", "Burgos", "Cáceres", "Cádiz",
@@ -19,20 +19,20 @@ capitales = [
 ]
 
 
-# 3. Función de normalización
+# 3. Función de normalización para evitar problemas de acentos y mayúsculas
 def normalizar(texto):
   texto = unicodedata.normalize("NFKD", str(texto).strip().casefold())
   return "".join(c for c in texto if not unicodedata.combining(c))
 
 
-# 4. Filtrar y mapear
+# 4. Filtrar y mapear 
 df["nombre_normalizado"] = df["NOMBRE_ACTUAL"].apply(normalizar)
 capitales_map = {normalizar(c): c for c in capitales}
 
 resultado = df[df["nombre_normalizado"].isin(capitales_map)].copy()
 resultado["ciudad"] = resultado["nombre_normalizado"].map(capitales_map)
 
-# 5. Seleccionar y convertir coordenadas
+# 5. Seleccionar y convertir coordenadas 
 coordenadas = resultado[[
     "ciudad",
     "LONGITUD_ETRS89_REGCAN95",
@@ -67,7 +67,7 @@ faltantes = sorted(set(capitales) - set(coordenadas["ciudad"]))
 if faltantes:
   raise ValueError(f"Faltan capitales: {faltantes}")
 
-# 8. Exportar a CSV local (descarga manualmente desde la barra lateral de Colab)
+# 8. Exportar a CSV local
 nombre_salida = "coordenadas_47_capitales.csv"
 coordenadas.to_csv(nombre_salida, index=False, encoding="utf-8-sig")
 

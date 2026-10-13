@@ -9,14 +9,11 @@ Parametros (valores por defecto):
   rho = 0.1 (evaporacion), q = 1000 (deposito de feromona).
 
 Resumen de lo que hace:
-  ejecutar                  : en cada iteracion todas las hormigas construyen una ruta, se
-                              actualiza el mejor global y las feromonas. Devuelve (ruta, costo).
+  ejecutar                  : en cada iteracion todas las hormigas construyen una ruta, se actualiza el mejor global y las feromonas. Devuelve (ruta, costo).
   _construir_ruta           : parte de una ciudad al azar, visita las demas y vuelve a la inicial.
-  _elegir_siguiente_ciudad  : P_ij = tau_ij^alpha * eta_ij^beta / suma sobre no visitadas,
-                              elegida por ruleta.
+  _elegir_siguiente_ciudad  : P_ij = tau_ij^alpha * eta_ij^beta / suma sobre no visitadas, elegida por ruleta.
   _calcular_costo_ruta      : suma los costos de los tramos consecutivos.
-  _actualizar_feromonas     : evaporacion tau <- (1 - rho) * tau, y cada hormiga deposita
-                              q / costo_ruta en los tramos que uso (en ambos sentidos).
+  _actualizar_feromonas     : evaporacion tau <- (1 - rho) * tau, y cada hormiga deposita q / costo_ruta en los tramos que uso (en ambos sentidos).
 
 Guarda el historial de mejores rutas por iteracion para generar el GIF.
 Se fijan las semillas de random y numpy (Semilla = 28) para reproducir los resultados.
@@ -28,8 +25,6 @@ import random
 Semilla = 28
 random.seed(Semilla)
 np.random.seed(Semilla)
-
-
 class ColoniaHormigasTSP:
     def __init__(self, matriz_costos, matriz_visibilidad, ciudades,
                  num_hormigas=47, num_iteraciones=100,

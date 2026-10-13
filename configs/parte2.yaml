@@ -2,27 +2,27 @@
 semilla: 28
 
 archivos:
-  distancias: "data/tsp/matriz_distancias_km.csv"
-  tiempos: "data/tsp/matriz_tiempos_horas.csv"
-  peajes: "data/tsp/matriz_peajes_euros.csv"
-  coordenadas: "data/tsp/coordenadas_47_capitales.csv"
-  export_costos: "resultados/parte2/matriz_costos.csv"
+  distancias: "data/tsp/matriz_distancias_km.csv" #Matriz de distancias en km entre las 47 capitales de provincia
+  tiempos: "data/tsp/matriz_tiempos_horas.csv" #Matriz de tiempos en horas entre las 47 capitales de provincia
+  peajes: "data/tsp/matriz_peajes_euros.csv" #Matriz de peajes en euros entre las 47 capitales de provincia
+  coordenadas: "data/tsp/coordenadas_47_capitales.csv" #Matriz de coordenadas (latitud y longitud) de las 47 capitales de provincia
+  export_costos: "resultados/parte2/matriz_costos.csv" #Matriz de costos (distnacia,horas y peaje) en euros entre las 47 capitales de provincia
 
 vehiculo:
-  valor_hora: 10.6
-  consumo_l_100km: 3.9
-  precio_litro: 1.84
+  valor_hora: 10.6 #Promedio de salario por hora de un trabajador en España.
+  consumo_l_100km: 3.9 #Promedio de consumo de combustible en litros por cada 100 km de un vehículo híbrido.
+  precio_litro: 1.84 #Precio del litro de combustible en euros.
 
 hormigas:
-  num_hormigas: 58
-  num_iteraciones: 100
-  alpha: 1.0
-  beta: 2.0
-  rho: 0.1
-  q: 1000
+  num_hormigas: 58 # Número de hormigas en el algoritmo
+  num_iteraciones: 100 # Número de iteraciones del algoritmo
+  alpha: 1.0 # Peso de la feromona (Atención a la comunidad)
+  beta: 2.0 # Peso de la heurística (Atención a la distancia/costo)
+  rho: 0.1 # Tasa de evaporación de la feromona 
+  q: 1000 # Constante para la actualización de la feromona
 
 genetico:
-  tamano_poblacion: 150
-  num_generaciones: 400
-  prob_mutacion: 0.25
-  elitismo: true
+  tamano_poblacion: 150 # Tamaño de la población en el algoritmo genético
+  num_generaciones: 400 # Número de generaciones en el algoritmo genético
+  prob_mutacion: 0.25 # Probabilidad de mutación en el algoritmo genético
+  elitismo: true # Indica si se utiliza elitismo en el algoritmo genético (true o false)
