@@ -61,3 +61,29 @@ def crear_gif(funcion, trayectoria, ruta, titulo, es_poblacion, max_cuadros=60, 
     animacion = FuncAnimation(fig, dibujar, frames=len(cuadros), blit=False)
     animacion.save(ruta, writer=PillowWriter(fps=fps), dpi=70)
     plt.close(fig)
+    
+def generar_gif_evolucion(algoritmo, gestor, filename="evolucion.gif", titulo_base="Algoritmo"):
+    print(f"🎨 Generando GIF de {titulo_base}... (puede tardar unos segundos)")
+    df_coord_sorted = gestor.df_coord.set_index('ciudad').reindex(gestor.ciudades)
+    lats = df_coord_sorted['latitud'].values
+    lons = df_coord_sorted['longitud'].values
+    fig, ax = plt.subplots(figsize=(10, 8))
+    frames_a_mostrar = algoritmo.historial_mejores_rutas[::10]
+    if algoritmo.historial_mejores_rutas[-1] not in frames_a_mostrar:
+        frames_a_mostrar.append(algoritmo.historial_mejores_rutas[-1])
+    def update(frame_data):
+        ax.clear()
+        ruta_indices, costo = frame_data
+        ax.scatter(lons, lats, c='red', s=20, zorder=5)
+        
+        ruta_lons = [lons[i] for i in ruta_indices]
+        ruta_lats = [lats[i] for i in ruta_indices]
+        ax.plot(ruta_lons, ruta_lats, c='blue', linewidth=1.5, zorder=4, alpha=0.8)
+        
+        iteracion_idx = algoritmo.historial_mejores_rutas.index(frame_data)
+        ax.set_title(f"{titulo_base} - Iteración/Gen {iteracion_idx}\nCosto: {costo:,.2f} €", fontsize=14, fontweight='bold')
+        ax.axis('off')
+    ani = animation.FuncAnimation(fig, update, frames=frames_a_mostrar, repeat=False)
+    ani.save(filename, writer='pillow', fps=4)
+    plt.close()
+    print(f"✅ GIF guardado como: '{filename}'.")
