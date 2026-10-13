@@ -67,11 +67,14 @@ class Problema:
         for i in range(self.n):
             e = np.zeros_like(x)
             e[i] = h
-            g[i] = (self._f(x + e) - self._f(x - e)) / (2 * h)
+            g[i] = (self.f(x + e) - self.f(x - e)) / (2 * h)
         return g
 
     @property
     def total_equivalente(self):
+        if self._grad is None:
+            # El gradiente numérico ya cuenta sus evaluaciones en n_f.
+            return self.n_f
         return self.n_f + self.costo_grad_en_f * self.n_grad
 
     def hay_presupuesto(self, costo=1):

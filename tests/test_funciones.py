@@ -59,7 +59,8 @@ def test_conteo():
     p.grad(np.ones(2))               # 1 de grad
     assert p.n_f == 11 and p.n_grad == 1
     assert p.total_equivalente == 11 + 4 * 1   # 2n = 4
-    # gradiente numerico no debe inflar n_f
+    # El gradiente numérico realiza 2n evaluaciones reales de f.
     q = Problema(d["f"], None, n=2)
     q.grad(np.ones(2))
-    assert q.n_f == 0 and q.n_grad == 1
+    assert q.n_f == 4 and q.n_grad == 1
+    assert q.total_equivalente == 4
