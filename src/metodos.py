@@ -26,7 +26,7 @@ def ejecutar_metodo(metodo, problema, rng, dominio, parametros, guardar_trayecto
 
     if metodo == "gd":
         x0 = rng.uniform(lo, hi, size=problema.n)       # condicion inicial aleatoria
-        return descenso_gradiente(problema, x0, guardar_trayectoria=guardar_trayectoria, **parametros)
+        return descenso_gradiente(problema, x0, guardar_trayectoria=guardar_trayectoria, limites=dominio, **parametros)
     if metodo == "ga":
         return algoritmo_genetico(problema, rng, lo, hi, guardar_trayectoria=guardar_trayectoria, **parametros)
     if metodo == "pso":

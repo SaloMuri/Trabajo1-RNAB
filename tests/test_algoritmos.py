@@ -95,3 +95,16 @@ def test_evals_exito_se_guarda_la_primera_vez_que_llega_a_la_meta():
     assert p.evals_exito == 4
     p.f(np.zeros((5, 2)))                # no se vuelve a escribir
     assert p.evals_exito == 4
+
+def test_gd_proyecta_las_actualizaciones_dentro_del_dominio():
+    p, (lo, hi) = _problema("rosenbrock", 2, 200)
+    r = descenso_gradiente(
+        p,
+        np.array([hi, lo]),
+        lr=1e-3,
+        limites=(lo, hi),
+        guardar_trayectoria=True,
+    )
+    trayectoria = np.asarray(r["trayectoria"])
+    assert np.all(trayectoria >= lo)
+    assert np.all(trayectoria <= hi)

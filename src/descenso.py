@@ -8,7 +8,7 @@ Para cuando: se acaba el presupuesto, el gradiente es casi cero, o el metodo div
 import numpy as np
 
 
-def descenso_gradiente(p, x0, lr=1e-3, tol_grad=1e-8, guardar_trayectoria=False):
+def descenso_gradiente(p, x0, lr=1e-3, tol_grad=1e-8, guardar_trayectoria=False, limites=None):
     x = np.asarray(x0, dtype=float).copy()
     trayectoria = [x.copy()] if guardar_trayectoria else None
     motivo = "presupuesto"
@@ -25,6 +25,10 @@ def descenso_gradiente(p, x0, lr=1e-3, tol_grad=1e-8, guardar_trayectoria=False)
                 motivo = "gradiente"
                 break
             x = x - lr * g
+            # Proyección al dominio: GD también debe respetar los límites de búsqueda.
+            if limites is not None:
+                lo, hi = limites
+                x = np.clip(x, lo, hi)
             fx = p.f(x)
             iteraciones += 1
             if guardar_trayectoria:
