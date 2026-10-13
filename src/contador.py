@@ -10,6 +10,8 @@ llaman. Asi el conteo queda en un solo lugar.
   * total_equivalente = n_f + costo_grad_en_f * n_grad  (esto se compara con el presupuesto).
   * evals_exito : evaluaciones equivalentes que se habian gastado cuando el mejor valor de f 
   bajo por primera vez de `meta` (None si nunca llego). Mide que tan rapido llega cada metodo.
+  * historial : lista de (total_equivalente, mejor_f), una entrada cada vez que el mejor valor
+  mejora. Sirve para graficar costo vs evaluaciones de cualquier metodo sin tocar los metodos.
 """
 
 import numpy as np
@@ -28,11 +30,13 @@ class Problema:
         self.mejor_x = None
         self.meta = meta            # valor de f que cuenta como exito (f_optimo + umbral); None = no medir
         self.evals_exito = None     # se llena la primera vez que mejor_f < meta
+        self.historial = []         # (total_equivalente, mejor_f) cada vez que mejor_f mejora
         
 
     def f(self, x):
         """Evalua f en un punto (n,) o en una poblacion (m, n) y actualiza el mejor valor."""
         x = np.asarray(x, dtype=float)
+        mejor_antes = self.mejor_f
         if x.ndim == 2:
             self.n_f += x.shape[0]
             valores = self._f(x)
@@ -44,6 +48,8 @@ class Problema:
             valores = self._f(x)
             if valores < self.mejor_f:
                 self.mejor_f, self.mejor_x = float(valores), x.copy()
+        if self.mejor_f < mejor_antes:
+            self.historial.append((self.total_equivalente, self.mejor_f))
         self._revisar_exito()
         return valores
     

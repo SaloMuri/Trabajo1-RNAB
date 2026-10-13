@@ -1,0 +1,78 @@
+base:
+  semilla: 42
+  corridas: 30
+  funciones:
+  - rosenbrock
+  - rastrigin
+  dimensiones:
+  - 2
+  - 3
+  metodos:
+  - gd
+  - ga
+  - pso
+  - de
+  carpeta_resultados: resultados/parte1
+  presupuesto_evaluaciones: 5000
+  costo_gradiente: null
+  umbral_exito:
+    rosenbrock: 0.0001
+    rastrigin: 0.001
+  gd:
+    lr: 0.001
+    tol_grad: 1.0e-08
+  ga:
+    pop: 40
+    elite: 2
+    k_torneo: 3
+    alpha: 0.5
+    p_cruce: 0.9
+    sigma: 0.05
+  pso:
+    pop: 20
+    w: 0.7298
+    c1: 1.49618
+    c2: 1.49618
+    vmax_frac: 0.5
+  de:
+    pop: 20
+    F: 0.5
+    CR: 0.9
+  gifs:
+    carpeta: resultados/gifs
+    semilla: 42
+    presupuesto_evaluaciones: 5000
+    max_cuadros: 60
+    fps: 10
+    lista:
+    - funcion: rosenbrock
+      metodo: gd
+      presupuesto: 20000
+    - funcion: rosenbrock
+      metodo: de
+    - funcion: rastrigin
+      metodo: gd
+    - funcion: rastrigin
+      metodo: de
+grid:
+  base: configs/parte1.yaml
+  presupuesto_evaluaciones: 5000
+  funciones: null
+  dimensiones: null
+  carpeta_resultados: resultados/grid_pso_demo
+  corridas_ajuste: 3
+  corridas_finales: 10
+  n_procesos: 1
+  rejilla:
+    pop:
+    - 10
+    - 20
+    w:
+    - 0.4
+    - 0.7298
+    c1:
+    - 1.0
+    - 1.49618
+    c2:
+    - 1.0
+    - 1.49618

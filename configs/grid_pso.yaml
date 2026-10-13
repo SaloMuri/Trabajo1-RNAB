@@ -1,0 +1,27 @@
+# ==========================================================================
+#  REJILLA DE HIPERPARAMETROS DE PSO (version completa, para el reporte)
+#  Ejecutar:  python -m scripts.grid_search_pso
+#  Demo rapida:  python -m scripts.grid_search_pso configs/grid_pso_demo.yaml
+# ==========================================================================
+
+base: configs/parte1.yaml        # de aqui salen semilla, funciones, dimensiones, presupuesto,
+                                 # umbrales y los parametros por defecto de PSO
+
+# Opcionales: si se ponen, reemplazan lo que dice el YAML base (solo para esta rejilla).
+presupuesto_evaluaciones: null
+funciones: null
+dimensiones: null
+
+carpeta_resultados: resultados/grid_pso
+
+corridas_ajuste: 10              # semillas compartidas por TODAS las combinaciones (para elegir)
+corridas_finales: 30             # semillas del experimento principal (para comparar antes/despues)
+n_procesos: 1                    # >1 reparte las combinaciones entre procesos (mismo resultado)
+
+# Valores a probar. Incluyen los valores por defecto (0.7298 / 1.49618) para ver su posicion.
+# Con presupuesto fijo, mas particulas (pop) significa menos iteraciones.
+rejilla:
+  pop: [10, 20, 40, 80]
+  w:   [0.4, 0.7298, 0.9]
+  c1:  [0.5, 1.0, 1.49618, 2.0]
+  c2:  [0.5, 1.0, 1.49618, 2.0]

@@ -1,0 +1,5 @@
+funcion,n,pop,w,c1,c2,costo_medio,tasa_exito,en_el_borde
+rosenbrock,2,20,0.4,1.0,2.0,774.0,1.0,"w,c2"
+rosenbrock,3,10,0.7298,0.5,2.0,6640.0,1.0,"pop,c1,c2"
+rastrigin,2,10,0.7298,1.49618,0.5,504.0,1.0,"pop,c2"
+rastrigin,3,40,0.4,2.0,1.49618,1808.0,1.0,"w,c1"
