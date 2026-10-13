@@ -5,3 +5,4 @@ matplotlib==3.10.8
 pillow==11.3.0
 pyyaml==6.0.3
 pytest==8.4.2
+joblib==1.5.3

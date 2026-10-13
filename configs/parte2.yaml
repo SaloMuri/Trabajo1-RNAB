@@ -17,7 +17,7 @@ hormigas:
   num_hormigas: 58
   num_iteraciones: 100
   alpha: 1.0
-  beta: 8.0
+  beta: 2.0
   rho: 0.1
   q: 1000
 
