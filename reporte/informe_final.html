@@ -191,7 +191,7 @@
         <p>A continuación se presenta la evolución de la mejor solución obtenida por la Colonia de Hormigas, proyectada sobre el mapa topológico (determinado por las coordenadas de las propias ciudades):</p>
         
         <div class="img-container">
-            <p class="img-caption">Animación no disponible en los archivos recibidos: Evolución ACO.</p>
+                <img src="../resultados/parte2/gifs/evolucion_aco.gif" alt="Evolución iterativa del recorrido cerrado óptimo por España (ACO)" class="img-fluid">
             <div class="img-caption">Figura 1. Evolución iterativa del recorrido cerrado óptimo por España (ACO).</div>
         </div>
         <h3>4.1. Análisis Visual de Convergencia (Colonia de Hormigas)</h3>
@@ -199,22 +199,22 @@
 
         <!-- FRAME INICIAL -->
         <div class="img-container">
-            <p class="img-caption">Recurso gráfico no disponible en los archivos recibidos: Ruta inicial ACO.</p>
+                <img src="../resultados/parte2/figuras/frame_inicial.png" alt="Estado Inicial (Iteración 0)" class="img-fluid">
             <div class="img-caption">Figura 1a. Estado Inicial (Iteración 0).</div>
         </div>
         <p><strong>Análisis Inicial:</strong> Al inicio del algoritmo, los niveles de feromona \( \tau_{ij} \) son equitativos en toda la matriz. Esto provoca que la toma de decisiones probabilística dependa casi exclusivamente de la heurística local (avaricia por elegir el vecino más cercano), resultando en una ruta caótica, altamente ineficiente, llena de autointersecciones y trayectos muy costosos de lado a lado del país.</p>
 
         <!-- FRAME MEDIO -->
         <div class="img-container">
-            <p class="img-caption">Recurso gráfico no disponible en los archivos recibidos: Ruta en etapa media ACO.</p>
-            <div class="img-caption">Figura 1b. Estado Medio (Iteración 50).</div>
+                <img src="../resultados/parte2/figuras/frame_medio.png" alt="Estado Medio (Iteración 50)" class="img-fluid">
+            <div class="img-caption">Figura 1b. Estado Medio (Iteración 28).</div>
         </div>
         <p><strong>Análisis Medio (Convergencia en proceso):</strong> Gracias al depósito proporcional de feromonas \( \Delta \tau_{ij} = Q / L \), las aristas (caminos) que han formado parte de rutas con un costo global menor comienzan a dominar la probabilidad de transición. La evaporación \( \rho \) ha limpiado los "errores" del inicio. Visualmente, el algoritmo ya descubrió el circuito exterior de la costa de la península, pero sigue dudando en las rutas centrales (cerca de Madrid y las Castillas), generando aún pequeños cruces.</p>
 
         <!-- FRAME FINAL -->
         <div class="img-container">
-            <p class="img-caption">Recurso gráfico no disponible en los archivos recibidos: Ruta óptima final ACO.</p>
-            <div class="img-caption">Figura 1c. Estado Final y Ruta Óptima (Iteración 100).</div>
+                <img src="../resultados/parte2/figuras/frame_final.png" alt="Estado Final (Iteración 100)" class="img-fluid">
+            <div class="img-caption">Figura 1c. Estado Final y Ruta Óptima (Iteración 35).</div>
         </div>
         <p><strong>Análisis de Ruta Óptima:</strong> La colonia ha convergido. Las feromonas se han cristalizado en una ruta altamente depurada donde ya no existen cruces. El algoritmo no solo minimizó la distancia bruta, sino que la figura demuestra cómo las hormigas integraron inteligentemente el costo del combustible, evitando vías excesivamente caras, consolidando un "anillo" natural alrededor de España con mínimas ineficiencias internas.</p>
 
@@ -222,12 +222,27 @@
         <p>Se corrió el experimento variando el costo de la hora del vendedor desde 5 €/h hasta 40 €/h para observar el punto de quiebre donde el algoritmo decide pagar peajes caros con tal de ahorrar horas al volante.</p>
         
         <div class="img-container">
-            <p class="img-caption">Recurso gráfico no disponible en los archivos recibidos: Sensibilidad Hora.</p>
+                <img src="../resultados/parte2/figuras/analisis_sensibilidad_hora.png" alt="Curvas de sensibilidad del costo de peajes frente al valor del tiempo" class="img-fluid">
             <div class="img-caption">Figura 2. Curvas de sensibilidad. La línea azul discontinua representa la cantidad de dinero gastada en peajes para cada valor del tiempo.</div>
         </div>
         
+      
         <p><strong>Discusión:</strong> A un costo de 5 €/h, el tiempo del vendedor es "barato", por lo que el algoritmo traza rutas por vías nacionales lentas para esquivar peajes (gasto en peajes casi nulo). Sin embargo, al cruzar el umbral de los 15-20 €/h, la gráfica azul muestra un aumento abrupto. El costo del tiempo se vuelve tan prohibitivo que al algoritmo le sale más económico transitar por autopistas de pago (como la AP-68 de Bilbao a Zaragoza), incrementando el gasto en peajes para minimizar las horas globales de conducción.</p>
+    
+    
     </div>
+        <h3>4.3 Algoritmo Evolutivo</h3>
+        <p>Se corrió el experimento variando el costo de la hora del vendedor desde 5 €/h hasta 40 €/h para observar el punto de quiebre donde el algoritmo decide pagar peajes caros con tal de ahorrar horas al volante.</p>
+        
+        <div class="img-container">
+                <img src="../resultados/gifs/evolucion_ga.gif" alt="Evolución del algoritmo evolutivo a lo largo de las generaciones" class="img-fluid">
+            <div class="img-caption">Figura 3. Evolución del algoritmo evolutivo a lo largo de las generaciones.</div>
+        </div>
+        
+        <p><strong>Discusión:</strong> La evolución del algoritmo evolutivo a lo largo de las generaciones muestra cómo se va mejorando la calidad de las soluciones encontradas. Inicialmente, las rutas son aleatorias y de baja calidad, pero conforme avanza el proceso, se observa una tendencia hacia soluciones más eficientes en términos de costo y tiempo.</p>
+    </div>
+
+
 
     <!-- ========================================== -->
     <!-- PESTAÑA 3: CACERÍA DE ALUCINACIONES -->
