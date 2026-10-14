@@ -237,7 +237,47 @@
             </div>
 
         <p><strong>Discusión:</strong> La evolución del algoritmo evolutivo a lo largo de las generaciones muestra cómo se va mejorando la calidad de las soluciones encontradas. Inicialmente, las rutas son aleatorias y de baja calidad, pero conforme avanza el proceso, se observa una tendencia hacia soluciones más eficientes en términos de costo y tiempo.</p>
+        <style>
+            #grid-search table { border-collapse: collapse; margin: 1em 0; width: 100%; }
+            #grid-search th, #grid-search td { border: 1px solid #bbb; padding: 6px 10px; text-align: left; }
+            #grid-search th { background: #2c3e50; color: #ffffff; }
+        </style>
+
+        <div id="grid-search">
+        <h3>4.4. Búsqueda por rejilla de los parámetros del ACO</h3>
+        <p>Para respaldar la configuración del ACO (sección 3.1) se realizó una búsqueda por rejilla sobre el número de hormigas (20, 47, 80), \( \alpha \) (0.5, 1, 2), \( \beta \) (1, 2, 3, 5) y \( \rho \) (0.05, 0.1, 0.3, 0.5). Cada una de las 144 configuraciones se repitió con 3 semillas (432 corridas de 50 iteraciones) y se comparó por su costo medio en euros. Las diferencias se contrastaron en pares con la misma semilla.</p>
+
+        <table>
+            <thead>
+                <tr><th>Parámetro</th><th>Cambio</th><th>Efecto sobre el costo medio</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>\( \alpha \)</td><td>0.5 → 1.0</td><td>−108.7 € (−6.7 %); mejora en 101 de 108 pares</td></tr>
+                <tr><td>\( \alpha \)</td><td>1.0 → 2.0</td><td>Sin diferencia significativa (2.1 €, p = 0.98)</td></tr>
+                <tr><td>\( \beta \)</td><td>2 → 5</td><td>−38.9 € (−2.5 %); mejora en 33 de 36 pares (p &lt; 0.001)</td></tr>
+                <tr><td>Hormigas</td><td>20 → 47</td><td>−22.3 € (−1.5 %)</td></tr>
+                <tr><td>Hormigas</td><td>47 → 80</td><td>−4.3 € (−0.3 %); no significativo (p = 0.15)</td></tr>
+                <tr><td>\( \rho \)</td><td>0.05 – 0.5</td><td>Sin efecto (medias entre 1498 € y 1501 €)</td></tr>
+            </tbody>
+        </table>
+
+        <p><strong>Análisis:</strong> el algoritmo es sensible a \( \alpha \) y \( \beta \): la peor combinación (\( \alpha=0.5 \), \( \beta=1 \)) llega a 2388 €, frente a ~1500 € en la zona buena. A partir de \( \alpha \geq 1 \) y \( \beta \geq 2 \), \( \alpha \) y \( \rho \) dejan de influir y el tamaño de la colonia aporta poco más allá de 47 hormigas. Además, valores altos de \( \beta \) reducen la variabilidad entre semillas (desviación típica de 48 € con \( \beta=1 \) a 15 € con \( \beta=5 \)).</p>
+
+        <div class="img-container">
+            <img src="../resultados/parte2/grid_search_aco/grid_efecto_marginal.png" alt="Efecto marginal de cada parámetro del ACO sobre el costo" class="img-fluid">
+            <div class="img-caption">Figura 4. Efecto marginal de cada parámetro sobre el costo (media ± desviación sobre el resto).</div>
         </div>
+
+        <div class="img-container">
+            <img src="../resultados/parte2/grid_search_aco/grid_heatmap_alpha_beta.png" alt="Costo medio según alpha y beta" class="img-fluid" style="max-width: 60%;">
+            <div class="img-caption">Figura 5. Costo medio (€) según \( \alpha \) y \( \beta \).</div>
+        </div>
+
+        <p><strong>Configuración elegida:</strong> la mejor configuración de la rejilla fue 80 hormigas, \( \alpha=1.0 \), \( \beta=5.0 \) y \( \rho=0.05 \) (1471.9 € de costo medio, ±16.8 €; mejor corrida 1454.7 €). Sin embargo, 11 configuraciones quedan dentro de un error estándar de ella, por lo que no hay un único óptimo. Se adoptaron como parámetros base <strong>58 hormigas, \( \alpha=1.0 \), \( \beta=2.0 \) y \( \rho=0.1 \)</strong>, que están dentro de la meseta de buen desempeño (entre 1516 € con 80 hormigas y 1542 € con 47, con estos mismos \( \alpha \), \( \beta \) y \( \rho \)). El único ajuste con mejora residual es \( \beta \): subirlo a 5 reduciría el costo medio en torno al 2.5 %, por lo que \( \beta=2.0 \) es una elección conservadora.</p>
+
+        <p><strong>Limitaciones:</strong> solo se usaron 3 semillas por configuración y 50 iteraciones (la ejecución final usa 100). La cantidad de 58 hormigas no forma parte de la rejilla, y su desempeño se infiere de los valores vecinos (47 y 80). Además, la rejilla se ejecutó con un valor del tiempo de \( S_{hora}=12 \) €/h, por lo que sus costos absolutos no son directamente comparables con los de las demás secciones (10.6 €/h).</p>
+        </div>
+    </div>
     <!-- ========================================== -->
     <!-- PESTAÑA 3: CACERÍA DE ALUCINACIONES -->
     <!-- ========================================== -->
