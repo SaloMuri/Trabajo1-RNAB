@@ -272,7 +272,7 @@
             
             </div>
             <div class="hallazgo-box">
-                <h3>Hallazgo 6: Bucle infinito por importación circular auto-inducida</h3>
+                <h3>Hallazgo 3: Bucle infinito por importación circular auto-inducida</h3>
                 <p><strong>Categoría:</strong> Código / Arquitectura de Software</p>
                 <p><strong>Prompt literal:</strong> <em>"Traceback (most recent call last): [...] ImportError: cannot import name 'GestorCostosTSP' from partially initialized module 'src.gestor_costos' (most likely due to a circular import) [...] volvió a ocurrir el mismo error, estás haciendo lo que me dijiste que quitara."</em></p>
                 <p><strong>Respuesta de la IA:</strong> Inicialmente, la IA explicó correctamente el problema e indicó borrar la línea. Sin embargo, en su propio bloque de código de "solución", volvió a inyectar la instrucción problemática. Al confrontarla, la IA admitió el fallo argumentando: "Bro, toda la razón, se cruzaron los cables. El error está en que esa línea se pegó dentro de src/gestor_costos.py cuando en realidad esa importación solo debía ir en el orquestador (experimentos/parte2.py)".</p>
@@ -296,7 +296,7 @@
             </div>
         </div>
                     -->
-        
+
         <!-- Script para cambiar de pestaña -->
         <script>
             function openTab(evt, tabName) {
