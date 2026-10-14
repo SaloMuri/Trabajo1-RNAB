@@ -479,35 +479,47 @@
             cuando la dirección de descenso conduce hacia una solución adecuada. Sin embargo, su rendimiento depende de
             la geometría del problema, del punto inicial y de la condición de parada. GA, PSO y DE, al mantener y
             actualizar poblaciones de candidatos, exploran distintas regiones del dominio y tienen más oportunidades de
-            localizar buenas soluciones cuando la superficie presenta múltiples mínimos locales; esa exploración también
-            tiene un coste de evaluaciones mayor.</p>
-        <p>En <strong>Rosenbrock</strong>, la dificultad principal es el valle estrecho y curvado que conduce al mínimo
-            global. Aunque la función tiene un mínimo global conocido, su geometría y condicionamiento hacen que la
-            dirección de descenso local pueda progresar lentamente o zigzaguear. Esto concuerda con GD: el valor medio
-            final fue 2.150 × 10⁻⁴ en 2D y 1.2 × 10⁻³ en 3D, con tasas de éxito del 16.7 % y 3.3 %, respectivamente,
-            consumiendo prácticamente las 40 000 evaluaciones equivalentes. En cambio, PSO alcanzó un 100 % de éxito en
-            ambas dimensiones; su valor medio final fue 0 en 2D y 5.251 × 10⁻⁸ en 3D, con el presupuesto completo. GA
-            también alcanzó el 100 % en 2D, pero descendió al 46.7 % en 3D. Esto sugiere que la exploración poblacional
-            ayudó a encontrar el valle y seguirlo en estas pruebas, aunque no elimina el efecto del aumento de
-            dimensión.</p>
-        <p>En <strong>Rastrigin</strong>, la función tiene una estructura periódica con numerosos mínimos locales. El
-            gradiente aporta información local, pero puede llevar a un punto estacionario que no sea el mínimo global.
-            En los experimentos, GD terminó con valores medios de 15.0238 en 2D y 29.7159 en 3D, y no alcanzó el umbral
-            de éxito en ninguna corrida. Además, consumió solo 251 y 364 evaluaciones equivalentes de media: el bajo
-            coste no indica que encontrara una solución mejor, sino que la condición de parada basada en el gradiente
-            podía cumplirse lejos del mínimo global. Frente a ello, GA obtuvo un 100 % de éxito en 2D y 3D, con valores
-            medios de 6.898 × 10⁻⁶ y 3.246 × 10⁻⁵; PSO obtuvo un 100 % en 2D y un 90 % en 3D, mientras que DE obtuvo un
-            96.7 % y un 80 %. Los tres métodos heurísticos consumieron cerca del presupuesto de 40 000 evaluaciones
-            equivalentes, lo que refleja el coste de mantener la exploración para evitar quedar atrapados en regiones
-            subóptimas.</p>
-        <p>Por tanto, <strong>GD aportó un mecanismo de búsqueda local directo, pero en estas pruebas no ofreció la
-                calidad final necesaria de forma consistente</strong>; su aparente ahorro en Rastrigin fue consecuencia
-            de una parada temprana y no de una mayor eficiencia para alcanzar el objetivo. <strong>Los métodos
-                heurísticos aportaron una exploración global más robusta</strong> en las superficies evaluadas, a cambio
-            de un coste computacional mucho mayor. La comparación debe hacerse usando conjuntamente el valor final de la
-            función objetivo, la tasa de éxito y las evaluaciones equivalentes, no solo el número de evaluaciones. Los
-            resultados son empíricos y dependen de los parámetros, las semillas, la dimensión y los umbrales
-            establecidos; no implican que los métodos poblacionales sean siempre superiores.</p>
+            localizar buenas soluciones cuando la superficie presenta múltiples mínimos locales. Estos tres métodos solo
+            se detienen al agotar el presupuesto, así que las evaluaciones que consumen (cerca de 40 000) no indican
+            cuántas necesitan para llegar a la meta. Para medirlo usamos la mediana de evaluaciones hasta el éxito
+            (evals_exito_mediana en resumen.csv), que se calcula solo con las corridas que alcanzaron el umbral.
+        </p>
+        <p>
+            En Rosenbrock, la dificultad principal es el valle estrecho y curvado que conduce al mínimo global. Aunque
+            la función tiene un mínimo global conocido, su geometría y condicionamiento hacen que la dirección de
+            descenso local pueda progresar lentamente o zigzaguear. Esto concuerda con GD: el valor medio final fue
+            2.150 × 10⁻⁴ en 2D y 1.2 × 10⁻³ en 3D, con tasas de éxito del 16.7 % y 3.3 % (5 y 1 corridas de 30), y esas
+            pocas corridas necesitaron una mediana de 35 531 y 35 015 evaluaciones equivalentes. En cambio, PSO alcanzó
+            un 100 % de éxito en ambas dimensiones, con medianas de 1 560 y 18 110 evaluaciones; su valor medio final
+            fue 0 en 2D y 5.251 × 10⁻⁸ en 3D. GA también alcanzó el 100 % en 2D (mediana de 2 966), pero descendió al
+            46.7 % en 3D (mediana de 30 041). DE llegó a la meta con muy pocas evaluaciones (540 y 1 100), pero su tasa
+            de éxito fue del 90 % en 2D y del 33.3 % en 3D. Además, su valor medio final (2.1 × 10⁻³ y 0.1747) fue peor
+            que el de GD, porque unas pocas corridas terminaron lejos del óptimo. Esto sugiere que la exploración
+            poblacional ayudó a encontrar el valle y seguirlo en estas pruebas, aunque no elimina el efecto del aumento
+            de dimensión.
+        </p>
+        <p>
+            En Rastrigin, la función tiene una estructura periódica con numerosos mínimos locales. El gradiente aporta
+            información local, pero puede llevar a un punto estacionario que no sea el mínimo global. En los
+            experimentos, GD terminó con valores medios de 15.0238 en 2D y 29.7159 en 3D, y no alcanzó el umbral de
+            éxito en ninguna corrida. Además, consumió solo 251 y 364 evaluaciones equivalentes de media: el bajo coste
+            no indica que encontrara una solución mejor, sino que la condición de parada basada en el gradiente podía
+            cumplirse lejos del mínimo global. Frente a ello, GA obtuvo un 100 % de éxito en 2D y 3D, con valores medios
+            de 6.898 × 10⁻⁶ y 3.246 × 10⁻⁵; PSO obtuvo un 100 % en 2D y un 90 % en 3D, mientras que DE obtuvo un 96.7 %
+            y un 80 %. Los tres métodos llegaron a la meta con medianas de entre 960 y 5 892 evaluaciones, muy por
+            debajo del presupuesto de 40 000.
+        </p>
+        <p>
+            Por tanto, GD aportó un mecanismo de búsqueda local directo, pero en estas pruebas no alcanzó el umbral de
+            éxito de forma consistente; su aparente ahorro en Rastrigin fue consecuencia de una parada temprana y no de
+            una mayor eficiencia para alcanzar el objetivo. Los métodos heurísticos aportaron una exploración global más
+            robusta en las superficies evaluadas, y cuando tuvieron éxito lo lograron con muchas menos evaluaciones que
+            GD en Rosenbrock 2D y en Rastrigin. En Rosenbrock 3D esa ventaja es menor para GA (30 041 frente a 35 015).
+            La comparación debe hacerse usando conjuntamente el valor final de la función objetivo, la tasa de éxito y
+            las evaluaciones hasta el éxito, no solo el número de evaluaciones consumidas. Los resultados son empíricos
+            y dependen de los parámetros, las semillas, la dimensión y los umbrales establecidos; no implican que los
+            métodos poblacionales sean siempre superiores.</p>
+
         <h2>6. Visualizaciones</h2>
         <p>Las figuras siguientes muestran la distribución de resultados, las tasas de éxito y ejemplos de evolución de
             GD y DE. Las animaciones de trayectoria son complementarias a las métricas numéricas.</p>
@@ -575,20 +587,27 @@
             muestran que los métodos poblacionales fueron más eficaces con los parámetros y presupuestos evaluados,
             especialmente en Rastrigin.</p>
         <h2>Referencias</h2>
+
+        <p>Clerc, M., &amp; Kennedy, J. (2002). The particle swarm—Explosion, stability, and convergence in a
+            multidimensional complex space. <em>IEEE Transactions on Evolutionary Computation, 6</em>(1), 58–73. <a
+                href="https://doi.org/10.1109/4235.985692">https://doi.org/10.1109/4235.985692</a></p>
+
+        <p>GloMPO. (s. f.). <em>Benchmarks</em>. GloMPO documentation. <a
+                href="https://glompo.readthedocs.io/en/latest/tasks/benchmarks.html">https://glompo.readthedocs.io/en/latest/tasks/benchmarks.html</a>
+        </p>
+
         <p>Goldberg, D. E. (1989). <em>Genetic algorithms in search, optimization, and machine learning</em>.
             Addison-Wesley.</p>
-        <p>Jamil, M., &amp; Yang, X.-S. (2013). A literature survey of benchmark functions for global optimisation
-            problems. <em>International Journal of Mathematical Modelling and Numerical Optimisation, 4</em>(2),
-            150–194. https://doi.org/10.1504/IJMMNO.2013.055204</p>
-        <p>Kennedy, J., &amp; Eberhart, R. (1995). Particle swarm optimization. In <em>Proceedings of
-                ICNN'95—International Conference on Neural Networks</em> (Vol. 4, pp. 1942–1948). IEEE.
-            https://doi.org/10.1109/ICNN.1995.488968</p>
+
         <p>Rastrigin, L. A. (1974). <em>Systems of extremal control</em>. Mir.</p>
+
         <p>Rosenbrock, H. H. (1960). An automatic method for finding the greatest or least value of a function. <em>The
-                Computer Journal, 3</em>(3), 175–184. https://doi.org/10.1093/comjnl/3.3.175</p>
-        <p>Storn, R., &amp; Price, K. (1997). Differential evolution—A simple and efficient heuristic for global
-            optimization over continuous spaces. <em>Journal of Global Optimization, 11</em>(4), 341–359.
-            https://doi.org/10.1023/A:1008202821328</p>
+                Computer Journal, 3</em>(3), 175–184. <a
+                href="https://doi.org/10.1093/comjnl/3.3.175">https://doi.org/10.1093/comjnl/3.3.175</a></p>
+
+        <p>Wikipedia contributors. (s. f.). <em>Test functions for optimization</em>. Wikipedia. <a
+                href="https://en.wikipedia.org/wiki/Test_functions_for_optimization">https://en.wikipedia.org/wiki/Test_functions_for_optimization</a>
+        </p>
     </div>
 
     <!-- Contenido Parte 2 -->
@@ -829,6 +848,63 @@
                 \) €/h, por lo que sus costos absolutos no son directamente comparables con los de las demás secciones
                 (10.6 €/h).</p>
         </div>
+
+        <style>
+            #referencias ul {
+                list-style: none;
+                padding-left: 0;
+            }
+
+            #referencias li {
+                padding-left: 2em;
+                text-indent: -2em;
+                margin-bottom: 0.8em;
+            }
+        </style>
+
+        <div id="referencias">
+            <h2>5. Referencias</h2>
+            <ul>
+                <li>Salario de Operador/a de ruta en España. (n.d.). <a
+                        href="https://es.indeed.com/career/operador-de-ruta/salaries?salaryType=HOURLY" target="_blank"
+                        rel="noopener">https://es.indeed.com/career/operador-de-ruta/salaries?salaryType=HOURLY</a></li>
+
+                <li>Autopistas de peaje actuales | Ministerio de Transportes y Movilidad Sostenible. (n.d.). <a
+                        href="https://www.transportes.gob.es/carreteras/nuestra-red/autopistas-peaje/peajes-dependientes-de-la-age/peajes-actuales"
+                        target="_blank"
+                        rel="noopener">https://www.transportes.gob.es/carreteras/nuestra-red/autopistas-peaje/peajes-dependientes-de-la-age/peajes-actuales</a>
+                </li>
+
+                <li>renault. (n.d.). Coches híbridos no enchufables (HEV) full hybrid E-Tech – Renault. Renault. <a
+                        href="https://www.renault.es/e-tech-full-hybrid.html" target="_blank"
+                        rel="noopener">https://www.renault.es/e-tech-full-hybrid.html</a></li>
+
+                <li>renault. (n.d.). Renault Clio full hybrid E-Tech - El urbano híbrido. Renault. <a
+                        href="https://www.renault.es/hibridos/clio.html" target="_blank"
+                        rel="noopener">https://www.renault.es/hibridos/clio.html</a></li>
+
+                <li>Precio de la gasolina y diesel HOY en las gasolineras de España. (n.d.). <a
+                        href="https://www.dieselogasolina.com/" target="_blank"
+                        rel="noopener">https://www.dieselogasolina.com/</a></li>
+
+                <li>Catálogo de la red y Mapa Oficial de Carreteras | Ministerio de Transportes y Movilidad Sostenible.
+                    (n.d.). <a
+                        href="https://www.transportes.gob.es/carreteras/catalogo-y-evolucion-de-la-red-de-carreteras"
+                        target="_blank"
+                        rel="noopener">https://www.transportes.gob.es/carreteras/catalogo-y-evolucion-de-la-red-de-carreteras</a>
+                </li>
+
+                <li>De Información Geográfica, C. N. (n.d.). Centro de Descargas del CNIG (IGN). Centro De Descargas Del
+                    CNIG. <a
+                        href="https://centrodedescargas.cnig.es/CentroDescargas/nomenclator-geografico-municipios-entidades-poblacion"
+                        target="_blank"
+                        rel="noopener">https://centrodedescargas.cnig.es/CentroDescargas/nomenclator-geografico-municipios-entidades-poblacion</a>
+                </li>
+
+                <li>Project OSRM. (n.d.). <a href="https://project-osrm.org/" target="_blank"
+                        rel="noopener">https://project-osrm.org/</a></li>
+            </ul>
+        </div>
     </div>
     <!-- ========================================== -->
     <!-- PESTAÑA 3: CACERÍA DE ALUCINACIONES -->
@@ -944,19 +1020,78 @@
                     -->
 
         <div class="hallazgo-box">
-            <h3>Hallazgo 5: Uso de cruce numérico destructivo (Single-Point) en permutaciones</h3>
-            <p><strong>Categoría:</strong> Matemáticas / Código</p>
-            <p><strong>Prompt literal:</strong> <em>"Escribe el operador de cruce (crossover) para el Algoritmo Genético
-                    del TSP."</em></p>
-            <p><strong>Respuesta de la IA:</strong> Aplicó un cruce clásico de un solo punto cortando listas de números
-                reales.</p>
-            <p><strong>Evidencia y Corrección:</strong> El código arrojaba errores porque generaba hijos con ciudades
-                repetidas y otras ausentes, violando la regla hamiltoniana. Se implementó un operador de <strong>Cruce
-                    de Orden (OX)</strong> que respeta la permutación única de las ciudades.</p>
+            <h3>Hallazgo 5: Inconsistencias con dominio de la función Rosenbrock</h3>
+            <p><strong>Categoría:</strong> Verificación</p>
+            <p><strong>Prompt literal:</strong> <em>"En torno a la función Rosenbrock, que es lo que debo incluir sobre
+                    esta en el reporte?"</em></p>
+            <p><strong>Respuesta de la IA:</strong> El reporte debe incluir las fórmulas, dominios y mínimos globales de
+                ambas funciones. Las fórmulas están implementadas en src/funciones.py, pero no basta con que estén en el
+                código.
+                Para Rosenbrock se utiliza:
+                \[
+                f(\mathbf{x})=\sum_{i=1}^{n-1}
+                \left[100(x_{i+1}-x_i^2)^2+(1-x_i)^2\right]
+                \]
+
+                El mínimo global está en \(\mathbf{x}=(1,\ldots,1)\), con \(f(\mathbf{x})=0\).
+                Para Rastrigin:
+                \[
+                f(\mathbf{x})=10n+\sum_{i=1}^{n}
+                [x_i^2-10\cos(2\pi x_i)]
+                \]
+
+                Su mínimo global está en \(\mathbf{x}=(0,\ldots,0)\), con \(f(\mathbf{x})=0\).
+                El reporte debe indicar también los dominios que se utilizaron en los experimentos. En el código son
+                \([-2.048,2.048]^n\) para Rosenbrock y \([-5.12,5.12]^n\) para Rastrigin.
+
+                Es importante distinguir entre el dominio de búsqueda elegido para el experimento y las propiedades
+                matemáticas generales de la función. Si se presentan afirmaciones sobre mínimos o dominios, deben
+                apoyarse en referencias verificables.
+            </p>
+            <p><strong>Evidencia y Corrección:</strong> Se volvió a preguntar expecificamente por los dominios, por ser
+                su respuesta tan ambigua. Debido a eso, pensamos que se trataba de una alucinación, puesto que el
+                dominio matemático de Rosenbrock va de \((-\infty,+\infty)\). Quisimos volver a preguntar para
+                asegurarnos de que los datos están bien dados.</p>
+            <p><strong>Prompt literal:</strong> <em>"perfecto. pregunta: en una pagina que el profesor recomendo para
+                    las funciones, https://en.wikipedia.org/wiki/Test_functions_for_optimization, aparece que el dominio
+                    de rosenbrok es de menos infinito a infinito. pero nosotros tenemos que va de mas o menos -2 a 2 (no
+                    tengo el valor exacto). esto a que se debe?"</em></p>
+            <p><strong>Respuesta de la IA:</strong> Buena observación. No necesariamente hay una contradicción: una cosa
+                es el dominio matemático de la función de Rosenbrock y otra el dominio de búsqueda que elegimos para
+                nuestros experimentos.
+                1. ¿Cuál es la diferencia?
+                - Dominio matemático: la función de Rosenbrock se puede definir para cualquier vector real
+                \(x\in\mathbb{R}^n\). Por eso, en la referencia de Wikipedia, el dominio aparece como
+                \((-\infty,+\infty)\).
+                - Dominio de búsqueda del experimento: nosotros restringimos dónde pueden buscar los algoritmos para que
+                todos trabajen dentro de una región definida y comparable.
+                En nuestro código, el dominio de búsqueda de Rosenbrock es:
+                \[
+                x_i\in[-2.048,\;2.048],\qquad i=1,\ldots,n
+                \]
+
+                Es decir, aproximadamente de \(-2\) a \(2\), pero el valor exacto es \(-2.048\) a \(2.048\). Este
+                intervalo no cambia la fórmula de Rosenbrock: limita la región donde se buscan soluciones.
+                2. ¿Por qué usamos ese intervalo?
+                El intervalo \([-2.048,2.048]\) es una decisión de configuración experimental, no una propiedad
+                obligatoria de Rosenbrock. Restringir el espacio de búsqueda permite comparar los algoritmos bajo las
+                mismas condiciones y mantener acotadas sus soluciones.
+                Además, el mínimo global de Rosenbrock está en \((1,1)\) para 2 dimensiones y en \((1,1,1)\) para 3
+                dimensiones, así que queda dentro de nuestro intervalo. Por tanto, la restricción no excluye la solución
+                óptima.
+
+
+                Una última precaución: el hecho de que el intervalo contenga el mínimo no significa que sea el único
+                intervalo válido. Si el profesor especificó un dominio concreto en las instrucciones del trabajo, ese
+                requisito tiene prioridad sobre la configuración que hayáis elegido.
+            </p>
+            <p><strong>Evidencia y Corrección:</strong> Dada la respuesta, revisamos las fuentes que la IA recomendó
+                (GloMPO), para verificar que efectivamente el dominio que sugirió es el que se usa normalmente para
+                probar Rosenbrock.</p>
         </div>
     </div>
 
-<!-- ========================================== -->
+    <!-- ========================================== -->
     <!-- PESTAÑA 4: USO DE IA -->
     <!-- ========================================== -->
     <div id="UsoIA" class="tab-content">
@@ -965,7 +1100,7 @@
             discusión sobre su impacto en los resultados obtenidos y en la arquitectura del código.</p>
 
         <h3>1. Prompts Principales y su Impacto
-</h3>
+        </h3>
         <table>
             <thead>
                 <tr>
@@ -1014,7 +1149,8 @@
                 </tr>
                 <tr>
                     <td><strong>Redacción y Tono del Informe Final</strong></td>
-                    <td><code>"juntemos esas dos cosas, que deberia poner, que no, como junto las cosas, cosas que sean suficientes para justificar decisiones y lo que tenemos ahi en codigo. ni mas ni menos. que no se vea ni IA, ni por experto. un trabajo de universidad."</code></td>
+                    <td><code>"juntemos esas dos cosas, que deberia poner y que no. Explicame cómo puedo hacerlo. Quiero que se junte lo que sea suficiente para justificar las decisiones tomadas y lo que se escribió en código"</code>
+                    </td>
                     <td>Permitió consolidar el documento HTML, sintetizando la teoría matemática con la implementación
                         real. Se ajustó el nivel de redacción para que reflejara un trabajo académico genuino, se
                         corrigió el formato de las ecuaciones LaTeX y se evitaron explicaciones teóricas repetitivas,
