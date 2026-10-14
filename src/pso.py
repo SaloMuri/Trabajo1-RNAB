@@ -36,16 +36,70 @@ def pso(p, rng, lo, hi, pop=20, w=0.7298, c1=1.49618, c2=1.49618,
     n = p.n
     vmax = vmax_frac * (hi - lo)
 
-    # posiciones y velocidades iniciales
+
+    # Ajustar la población al presupuesto disponible.
+    if p.max_evals is not None:
+        disponibles = p.max_evals - p.total_equivalente
+        pop = min(pop, disponibles)
+
+    if pop <= 0:
+        return dict(
+            x=p.mejor_x,
+            f=p.mejor_f,
+            iteraciones=0,
+            motivo="presupuesto",
+            divergio=False,
+            trayectoria=None
+        )
+
+    # Posiciones y velocidades iniciales
     x = rng.uniform(lo, hi, (pop, n))
+
     if v_inicial == "aleatoria":
         v = rng.uniform(-vmax, vmax, (pop, n))
     else:
         v = np.zeros((pop, n))
+
+
+
     fx = np.asarray(p.f(x))
+
+    trayectoria = [x.copy()] if guardar_trayectoria else None
+
+
+    # Detectar valores no finitos en la población inicial
+    validas = np.all(np.isfinite(x), axis=1) & np.isfinite(fx)
+
+    if not np.all(validas):
+        if np.any(validas):
+            # Si hay partículas válidas, conservar la mejor de ellas
+            indices_validos = np.flatnonzero(validas)
+            i_mejor = indices_validos[np.argmin(fx[indices_validos])]
+            mejor_x = x[i_mejor].copy()
+            mejor_f = float(fx[i_mejor])
+        else:
+            # No existe ninguna solución inicial válida
+            mejor_x = None
+            mejor_f = np.inf
+
+        return dict(
+            x=mejor_x,
+            f=mejor_f,
+            iteraciones=0,
+            motivo="divergencia",
+            divergio=True,
+            trayectoria=trayectoria
+        )
+
+
     mejor_personal, f_personal = x.copy(), fx.copy()
     mejor_global = mejor_personal[np.argmin(f_personal)].copy()
-    trayectoria = [x.copy()] if guardar_trayectoria else None
+
+    # Guardar la mejor solución válida encontrada hasta ahora
+    i_mejor = int(np.argmin(fx))
+    mejor_x_valido = x[i_mejor].copy()
+    mejor_f_valido = float(fx[i_mejor])
+
 
     # cuantas iteraciones alcanza el presupuesto (sirve para repartir la inercia decreciente)
     n_iter = max((p.max_evals - p.total_equivalente) // pop, 1)
@@ -72,11 +126,34 @@ def pso(p, rng, lo, hi, pop=20, w=0.7298, c1=1.49618, c2=1.49618,
         x = np.clip(x, lo, hi)
         v[fuera] = 0.0
 
-        # evaluar y actualizar mejores personales y el mejor global
+        # Guardar el mejor valor antes de evaluar esta iteración
         mejor_antes = p.mejor_f
+
+        # evaluar y actualizar mejores personales y el mejor global
+
         fx = np.asarray(p.f(x))
+
+        # Detectar divergencia durante las iteraciones
+        if (
+            not np.all(np.isfinite(x))
+            or not np.all(np.isfinite(v))
+            or not np.all(np.isfinite(fx))
+        ):
+            motivo = "divergencia"
+            break
+
+        # Actualizar la mejor solución válida global encontrada
+        i_mejor = int(np.argmin(fx))
+        if fx[i_mejor] < mejor_f_valido:
+            mejor_f_valido = float(fx[i_mejor])
+            mejor_x_valido = x[i_mejor].copy()
+
+        # Actualizar las mejores posiciones personales
         mejoro = fx < f_personal
-        mejor_personal[mejoro], f_personal[mejoro] = x[mejoro], fx[mejoro]
+        mejor_personal[mejoro] = x[mejoro]
+        f_personal[mejoro] = fx[mejoro]
+
+        # Actualizar la mejor posición global del enjambre
         mejor_global = mejor_personal[np.argmin(f_personal)].copy()
 
         iteraciones += 1
@@ -90,5 +167,12 @@ def pso(p, rng, lo, hi, pop=20, w=0.7298, c1=1.49618, c2=1.49618,
                 motivo = "estancamiento"
                 break
 
-    return dict(x=p.mejor_x, f=p.mejor_f, iteraciones=iteraciones, motivo=motivo,
-                divergio=False, trayectoria=trayectoria)
+
+    return dict(
+        x=mejor_x_valido,
+        f=mejor_f_valido,
+        iteraciones=iteraciones,
+        motivo=motivo,
+        divergio=(motivo == "divergencia"),
+        trayectoria=trayectoria
+    )

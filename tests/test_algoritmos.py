@@ -108,3 +108,26 @@ def test_gd_proyecta_las_actualizaciones_dentro_del_dominio():
     trayectoria = np.asarray(r["trayectoria"])
     assert np.all(trayectoria >= lo)
     assert np.all(trayectoria <= hi)
+
+def test_gd_respeta_el_dominio_en_toda_la_trayectoria():
+    for nombre in ("rosenbrock", "rastrigin"):
+        for n in (2, 3):
+            p, (lo, hi) = _problema(nombre, n, 3000)
+            x0 = np.full(n, (lo + hi) / 2)
+
+            r = descenso_gradiente(
+                p,
+                x0,
+                lr=1e-3,
+                guardar_trayectoria=True,
+                limites=(lo, hi)
+            )
+
+            trayectoria = np.asarray(r["trayectoria"])
+
+            assert np.all(trayectoria >= lo - 1e-12), (
+                f"{nombre} {n}D: salió del límite inferior"
+            )
+            assert np.all(trayectoria <= hi + 1e-12), (
+                f"{nombre} {n}D: salió del límite superior"
+            )
